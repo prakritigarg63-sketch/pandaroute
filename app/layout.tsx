@@ -21,6 +21,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // The keyboard shrinks the viewport instead of overlaying it, so a sticky CTA
+  // stays above the keyboard rather than behind it.
+  interactiveWidget: "resizes-content",
   themeColor: "#fff8eb",
 };
 

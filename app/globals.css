@@ -55,9 +55,12 @@
 
   /* Gap Map buckets. Learn leans on the product accent; the other two stay
      distinct so the three are never one amber wash. Reserved for that screen. */
-  --color-learn: #d99000;
-  --color-practice: #5b7794;
-  --color-skip: #6b8f7a;
+  --color-learn: #a86500; /* amber, deep enough to carry a label */
+  --color-learn-soft: #fff1d1;
+  --color-practice: #4a6580; /* soft slate blue */
+  --color-practice-soft: #eaf0f5;
+  --color-skip: #3f7a5c; /* soft green — the same family as success */
+  --color-skip-soft: #e8f2eb;
 
   --font-display: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
   --font-body: var(--font-inter), "Segoe UI", system-ui, sans-serif;
@@ -352,5 +355,95 @@
 
   .panda-sparkles {
     display: none;
+  }
+}
+
+/* Capability chips settling onto the route map. */
+@keyframes route-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.route-chip {
+  animation: route-chip-in 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-chip {
+    animation: none !important;
+  }
+}
+
+/* The verification trophy arrives with weight, not fireworks. */
+@keyframes trophy-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.trophy-in {
+  display: inline-block;
+  animation: trophy-in 520ms cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trophy-in {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The mobile shell.
+
+   Every screen is the same column: 430px at most, a 20px gutter, and safe-area
+   padding so nothing sits under a notch or a home indicator. Defining it once
+   here means the whole app changes width or padding from a single place, and no
+   screen can quietly drift.
+
+   `.screen-flush` is for screens that end in the bottom navigation, which
+   carries its own safe-area padding.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .screen {
+    margin-inline: auto;
+    display: flex;
+    width: 100%;
+    max-width: 430px;
+    min-height: 100dvh;
+    flex-direction: column;
+    padding-inline: 1.25rem;
+    padding-top: max(env(safe-area-inset-top), 1rem);
+    padding-bottom: max(env(safe-area-inset-bottom), 1.25rem);
+  }
+
+  .screen-flush {
+    padding-bottom: 0;
+  }
+
+  /* The primary action stays reachable on a long screen, and clears the home
+     indicator on phones that have one. */
+  .sticky-cta {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    margin-top: 1rem;
+    background-color: var(--color-canvas);
+    padding-top: 0.5rem;
+    padding-bottom: max(env(safe-area-inset-bottom), 0.25rem);
   }
 }

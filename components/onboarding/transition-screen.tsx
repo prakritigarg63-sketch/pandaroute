@@ -2,16 +2,20 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowDown, ChevronLeft, ClipboardCheck, Compass } from "lucide-react";
+import { ArrowDown, ChevronLeft, Compass } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ChoiceChips } from "@/components/ui/ChoiceChips";
 import { StepDots } from "@/components/ui/StepDots";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { usePandaCue } from "@/components/panda/use-panda-cue";
-import { TRANSITION_CUES } from "@/components/panda/panda-reactions";
 import {
-  CURRENT_ROLE,
+  ROUTE_UNAVAILABLE_CUE,
+  TRANSITION_CUES,
+} from "@/components/panda/panda-reactions";
+import { CurrentRoleSelect } from "@/components/onboarding/current-role-select";
+import { CURRENT_ROLE_ID } from "@/lib/current-roles";
+import {
   EXPERIENCE_OPTIONS,
   TARGET_ROLE,
   TIMELINE_OPTIONS,
@@ -83,7 +87,7 @@ export function TransitionScreen({ onBuild }: { onBuild: () => void }) {
   }, [ready, play, onBuild]);
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-6 pt-4 pb-6">
+    <div className="screen">
       <div className="flex items-center justify-between">
         <Link
           href="/onboarding"
@@ -112,17 +116,14 @@ export function TransitionScreen({ onBuild }: { onBuild: () => void }) {
         </p>
 
         <div className="mt-2 flex flex-col items-stretch">
-          <Card padded={false} className="flex items-center gap-3 p-3.5">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-tile)] bg-sunk">
-              <ClipboardCheck className="size-5 text-ink-muted" aria-hidden />
-            </span>
-            <span>
-              <span className="block text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
-                From
-              </span>
-              <span className="block text-[17px] leading-snug font-bold">{CURRENT_ROLE}</span>
-            </span>
-          </Card>
+          {/* The route is fixed for this MVP, but the field is a real selector:
+              the locked rows say which transitions are planned without
+              pretending any of them work. */}
+          <CurrentRoleSelect
+            value={CURRENT_ROLE_ID}
+            onSelect={() => undefined}
+            onUnavailable={(option) => play("role-" + option.id, ROUTE_UNAVAILABLE_CUE)}
+          />
 
           <ArrowDown className="my-1.5 size-5 self-center text-ink-faint" aria-hidden />
 
@@ -140,6 +141,10 @@ export function TransitionScreen({ onBuild }: { onBuild: () => void }) {
             </span>
           </Card>
         </div>
+
+        <p className="mt-2 text-[12px] leading-snug text-ink-faint">
+          More career routes are coming soon.
+        </p>
 
         <p className="mt-2.5 text-[13px] leading-snug text-ink-muted">
           Your QA experience counts. We&apos;ll build on what you already know instead of

@@ -78,7 +78,7 @@ export function BuddyIntro({ onStart }: { onStart: () => void }) {
   }, [play, onStart]);
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-6 pt-7 pb-7">
+    <div className="screen">
       <div className="flex items-center gap-2.5">
         <span className="flex size-9 items-center justify-center overflow-hidden rounded-xl bg-primary-soft">
           <Image src="/panda-logo.png" alt="" width={34} height={34} priority />

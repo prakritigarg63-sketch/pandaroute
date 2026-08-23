@@ -118,6 +118,12 @@ export const TRANSITION_CUES: Record<"experience" | "timeline" | "build", PandaC
   },
 };
 
+/** Someone tapped a route that isn't built yet. Honest, not apologetic. */
+export const ROUTE_UNAVAILABLE_CUE: PandaCue = {
+  reaction: "thinking",
+  message: "I'm still mapping that route. For now, QA → PM is ready to explore. 🧭",
+};
+
 /**
  * The diagnostic introduction. Both send-offs point at the learner's own
  * judgement rather than at a right answer, which is the rule Panda follows
