@@ -1,26 +1,356 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Pandaroute design tokens — Amber & Cream.
+
+   One hue carries meaning, and the meaning is movement: amber marks action,
+   progress and achievement, nothing else. Cream is the ground the learner
+   thinks on, charcoal is the information, green is the only other semantic
+   colour and it means "verified".
+
+   Amber is a light hue, so it is split by job rather than reused flat:
+
+     primary          fills  — buttons, progress, active nodes
+     primary-strong   marks  — icons and borders sitting on light fills
+     primary-ink      text   — the only amber that may carry words on cream
+
+   Amber text at --color-primary on cream reads at 2.3:1 and is never used for
+   type. Every pairing below is checked in the theme comment beside it.
+
+   Single light theme on purpose: these screens are handed to user-testers on
+   borrowed phones in daylight, and a dark inversion would need its own pass.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Amber ramp */
+  --color-amber-100: #fff1d1; /* soft fills, Panda's milestone bubbles */
+  --color-amber-200: #fbe7b5; /* selected chips */
+  --color-amber-500: #d99000; /* primary fill — charcoal on this is 6.6:1 */
+  --color-amber-600: #c58500; /* hover — charcoal 5.2:1 */
+  --color-amber-700: #b98000; /* pressed — charcoal 4.8:1 */
+  --color-amber-800: #a86500; /* icons, borders, completed nodes — 4.4:1 on cream */
+  --color-amber-900: #8f5600; /* amber text on cream — 5.7:1 */
+
+  /* Ground and ink */
+  --color-canvas: #fff8eb;
+  --color-surface: #fffdf8;
+  --color-sunk: #f7efde;
+  --color-ink: #18212b; /* 15.4:1 on cream */
+  --color-ink-muted: #6f665b; /* 5.3:1 on cream */
+  --color-ink-faint: #857a6c; /* 4.0:1 on cream — captions and micro-labels */
+  --color-line: #e9ddc9;
+  --color-line-light: #f2e8d8;
+
+  /* Semantic aliases — components use these, never the ramp */
+  --color-primary: var(--color-amber-500);
+  --color-primary-hover: var(--color-amber-600);
+  --color-primary-strong: var(--color-amber-800);
+  --color-primary-ink: var(--color-amber-900);
+  --color-primary-soft: var(--color-amber-100);
+  --color-primary-fill: var(--color-amber-200);
+
+  /* Amber means "moving forward", green means "proven". Never interchangeable. */
+  --color-success: #3f8f5b;
+  --color-error: #c85a4a;
+
+  /* Gap Map buckets. Learn leans on the product accent; the other two stay
+     distinct so the three are never one amber wash. Reserved for that screen. */
+  --color-learn: #d99000;
+  --color-practice: #5b7794;
+  --color-skip: #6b8f7a;
+
+  --font-display: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--font-inter), "Segoe UI", system-ui, sans-serif;
+
+  --radius-card: 0.875rem;
+  --radius-tile: 0.75rem;
+  --radius-pill: 9999px;
+
+  /* Warm-neutral, never grey: a cool shadow on cream reads as dirt. */
+  --shadow-warm: 0 6px 16px -10px rgba(93, 71, 33, 0.38);
+  --shadow-warm-lg: 0 10px 24px -14px rgba(93, 71, 33, 0.45);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  /* Every interactive element gets the same visible focus ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-amber-800);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Digits that line up in the step counter. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Content settles in once on arrival. */
+@keyframes gps-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gps-rise {
+  animation: gps-rise 320ms ease-out both;
+}
+
+/* ---------------------------------------------------------------------------
+   Panda motion.
+
+   Motion carries emotion here, it does not decorate: one slow idle loop, and
+   short one-shots (200–600ms) tied to something the learner actually did.
+   Nothing loops fast, nothing loops forever except the breathing.
+
+   Every class in this block is switched off by the reduced-motion rule at the
+   bottom — Panda still changes state and still speaks, it just stops moving.
+--------------------------------------------------------------------------- */
+
+/* Idle: breathing plus a few pixels of float. Deliberately slow. */
+@keyframes panda-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.015);
+  }
+}
+
+.panda-idle {
+  animation: panda-breathe 3.6s ease-in-out infinite;
+}
+
+/* Welcome: fade in, rise, one small settle. */
+@keyframes panda-welcome {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Thinking: a head tilt, side to side. */
+@keyframes panda-thinking {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-4deg) translateX(-2px);
+  }
+  70% {
+    transform: rotate(4deg) translateX(2px);
+  }
+}
+
+/* Helpful: a small lift, as if leaning in to answer. */
+@keyframes panda-helpful {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+/* Celebrate: two short bounces, no confetti. */
+@keyframes panda-celebrate {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-9px) scale(1.04);
+  }
+  50% {
+    transform: translateY(0) scale(0.98);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.02);
+  }
+}
+
+/* Excited: the same shape, faster and tighter, on the way out of the screen. */
+@keyframes panda-excited {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-11px) scale(1.05);
+  }
+  70% {
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+.panda-welcome {
+  animation: panda-welcome 620ms cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+.panda-thinking {
+  animation: panda-thinking 600ms ease-in-out;
+}
+
+.panda-helpful {
+  animation: panda-helpful 380ms ease-out;
+}
+
+.panda-celebrate {
+  animation: panda-celebrate 560ms ease-out;
+}
+
+.panda-excited {
+  animation: panda-excited 460ms ease-out;
+}
+
+/* A soft ring that warms up behind Panda for the length of a reaction. */
+@keyframes panda-glow-in {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.panda-glow {
+  position: absolute;
+  inset: -12%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
+    transparent 68%
+  );
+  animation: panda-glow-in 700ms ease-out both;
+  pointer-events: none;
+}
+
+/* Three small sparks for the celebrate reaction. */
+@keyframes panda-spark {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.6);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.7);
+  }
+}
+
+.panda-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.panda-sparkles span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  opacity: 0;
+  animation: panda-spark 620ms ease-out both;
+}
+
+.panda-sparkles span:nth-child(1) {
+  top: 8%;
+  left: 6%;
+}
+
+.panda-sparkles span:nth-child(2) {
+  top: 0;
+  right: 14%;
+  animation-delay: 90ms;
+}
+
+.panda-sparkles span:nth-child(3) {
+  top: 26%;
+  right: 2%;
+  width: 4px;
+  height: 4px;
+  animation-delay: 180ms;
+}
+
+/* The bubble arrives from just below, so it reads as coming out of Panda. */
+@keyframes panda-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.panda-bubble-in {
+  animation: panda-bubble-in 220ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Removed outright, not shortened: an infinite animation at 0.01ms is still
+     an animation running. The bubbles and the state changes stay — only the
+     movement goes. */
+  .panda-idle,
+  .panda-welcome,
+  .panda-thinking,
+  .panda-helpful,
+  .panda-celebrate,
+  .panda-excited,
+  .panda-bubble-in,
+  .gps-rise {
+    animation: none !important;
+  }
+
+  .panda-glow,
+  .panda-sparkles span {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  .panda-sparkles {
+    display: none;
+  }
 }
