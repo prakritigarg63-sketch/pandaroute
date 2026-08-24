@@ -1,5 +1,5 @@
-import { DiagnosticIntro } from "@/components/onboarding/diagnostic-intro";
+import { ThinkingQuest } from "@/components/quest/thinking-quest";
 
 export default function DiagnosticIntroPage() {
-  return <DiagnosticIntro />;
+  return <ThinkingQuest />;
 }

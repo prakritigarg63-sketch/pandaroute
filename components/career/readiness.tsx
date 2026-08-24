@@ -218,7 +218,7 @@ export function WhatsNext() {
       subject: CAPSTONE.proof.title,
       body: "Convert your Capstone into a structured case you can discuss in interviews.",
       cta: "Build my case →",
-      href: "/proof",
+      href: "/career/evidence",
     },
     {
       id: "interview",
@@ -227,7 +227,7 @@ export function WhatsNext() {
       subject: "“Tell me about a product problem you solved.”",
       body: "Walk through your Capstone as if an interviewer asked you that.",
       cta: "Practice interview →",
-      href: "/proof",
+      href: "/interview",
     },
   ];
 
@@ -266,6 +266,9 @@ export function WhatsNext() {
 
       <div className="mt-auto flex flex-col gap-2.5 pt-5">
         <PandaAside message={CAPSTONE.panda.next} />
+        <Button size="md" full variant="outline" href="/career-kit">
+          Open my Career Kit
+        </Button>
       </div>
 
       <BottomNav active="progress" />
