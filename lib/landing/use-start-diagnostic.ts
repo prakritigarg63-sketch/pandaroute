@@ -22,7 +22,13 @@ import { track } from "@/lib/analytics";
 const ENTRY_ROUTE = "/onboarding";
 const HANDOFF_MS = 650;
 
-export function useStartDiagnostic() {
+/**
+ * `destination` defaults to the diagnostic entry point. The one other caller
+ * today (the Home CTA, once the diagnostic is already complete) passes
+ * `/route` instead — same guarded, one-shot "starting" beat, different place
+ * it hands off to.
+ */
+export function useStartDiagnostic(destination: string = ENTRY_ROUTE) {
   const router = useRouter();
   const [starting, setStarting] = useState(false);
   const guard = useRef(false);
@@ -34,8 +40,8 @@ export function useStartDiagnostic() {
     setStarting(true);
     track("diagnostic_started", { from: "landing" });
 
-    window.setTimeout(() => router.push(ENTRY_ROUTE), HANDOFF_MS);
-  }, [router]);
+    window.setTimeout(() => router.push(destination), HANDOFF_MS);
+  }, [router, destination]);
 
   return { starting, start } as const;
 }

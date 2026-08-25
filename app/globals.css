@@ -52,6 +52,7 @@
   /* Amber means "moving forward", green means "proven". Never interchangeable. */
   --color-success: #3f8f5b;
   --color-error: #c85a4a;
+  --color-error-soft: #fff0ec; /* "not yet proven" — a gap, not a failure, kept low-alarm */
 
   /* Gap Map buckets. Learn leans on the product accent; the other two stay
      distinct so the three are never one amber wash. Reserved for that screen. */

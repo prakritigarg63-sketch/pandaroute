@@ -12,37 +12,47 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 import { SkillMapSection } from "@/components/landing/skill-map-section";
 import { TestimonialSection } from "@/components/landing/testimonial-section";
-import { useStartDiagnostic } from "@/lib/landing/use-start-diagnostic";
+import { useHomeCta } from "@/lib/landing/use-home-cta";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 /* ---------------------------------------------------------------------------
-   PandaRoute's marketing landing page.
+   PandaRoute's Home page (formerly a standalone marketing landing page —
+   see the summary for that move). Now the app's default destination, for a
+   visitor who hasn't started the diagnostic and a returning learner alike.
 
-   A different audience than the rest of the app: someone who hasn't decided
-   to use PandaRoute yet, arriving from a search or a link rather than mid
-   product. Every "start the diagnostic" control here calls the same
-   `useStartDiagnostic` hook, so the loading state, the panda reaction and the
-   navigation are one behaviour shared by four buttons, not four copies of it.
+   Every CTA control here calls the same `useHomeCta` hook, so the loading
+   state, the panda reaction and the navigation are one behaviour shared by
+   four buttons, not four copies of it. `phase` is the one new thing it adds
+   over the plain `useStartDiagnostic` this used to call directly: each
+   button maps the same three phases to its own copy, so "Start free
+   diagnostic" becomes "Continue my journey" everywhere at once when the
+   diagnostic is already done.
 --------------------------------------------------------------------------- */
 
 export function LandingPage() {
-  const { starting, start } = useStartDiagnostic();
+  const { phase, starting, start } = useHomeCta();
   const heroRef = useRef<HTMLElement>(null);
   const finalCtaRef = useRef<HTMLElement>(null);
 
   return (
     <div className="min-h-dvh bg-canvas">
-      <SiteHeader onStart={start} starting={starting} />
+      <SiteHeader onStart={start} starting={starting} phase={phase} />
 
       {/* The hero's own <h1> is the page's one heading-level-one — see
           hero-section.tsx. No duplicate here. */}
       <main>
-        <HeroSection onStart={start} starting={starting} heroRef={heroRef} />
+        <HeroSection onStart={start} starting={starting} phase={phase} heroRef={heroRef} />
         <RouteSection />
         <SkillMapSection />
         <BenefitsSection />
         <QuestCardSection />
         <TestimonialSection />
-        <FinalCtaSection onStart={start} starting={starting} finalCtaRef={finalCtaRef} />
+        <FinalCtaSection
+          onStart={start}
+          starting={starting}
+          phase={phase}
+          finalCtaRef={finalCtaRef}
+        />
       </main>
 
       <SiteFooter />
@@ -52,9 +62,17 @@ export function LandingPage() {
         finalCtaRef={finalCtaRef}
         onStart={start}
         starting={starting}
+        phase={phase}
       />
 
       <DiagnosticStatus starting={starting} />
+
+      {/* BottomNav's own `-mx-5` assumes the `px-5` every `.screen` wrapper
+          carries elsewhere in the app — restored here since this page has
+          no such ambient padding. */}
+      <div className="px-5">
+        <BottomNav active="home" />
+      </div>
     </div>
   );
 }

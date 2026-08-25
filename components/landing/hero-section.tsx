@@ -6,6 +6,13 @@ import { PandaGuide } from "@/components/landing/panda-guide";
 import { DiagnosticButtonContent } from "@/components/landing/shared";
 import { JOURNEY_CHECKPOINTS } from "@/lib/landing/content";
 import { useReducedMotionPreference } from "@/lib/landing/use-reduced-motion";
+import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
+
+const CTA_LABEL: Record<HomeCtaPhase, string> = {
+  new: "Start free diagnostic →",
+  resume: "Continue diagnostic →",
+  return: "Continue my journey →",
+};
 
 /* ---------------------------------------------------------------------------
    The hero.
@@ -27,10 +34,12 @@ const FACTS = [
 export function HeroSection({
   onStart,
   starting,
+  phase,
   heroRef,
 }: {
   onStart: () => void;
   starting: boolean;
+  phase: HomeCtaPhase;
   heroRef: React.RefObject<HTMLElement | null>;
 }) {
   const reduced = useReducedMotionPreference();
@@ -87,7 +96,7 @@ export function HeroSection({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <DiagnosticButtonContent starting={starting} idleLabel="Start free diagnostic →" />
+            <DiagnosticButtonContent starting={starting} idleLabel={CTA_LABEL[phase]} />
           </motion.button>
 
           <motion.ul
@@ -155,7 +164,7 @@ function JourneyIllustration({ reduced, celebrate }: { reduced: boolean; celebra
           <motion.div
             key={checkpoint.id}
             className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-center"
-            style={{ bottom: `${7 + index * 29}%` }}
+            style={{ bottom: `${6 + index * 23}%` }}
             initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.75 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.5 }}

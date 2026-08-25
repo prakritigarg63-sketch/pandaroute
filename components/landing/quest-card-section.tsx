@@ -1,23 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Sparkles, Wrench } from "lucide-react";
+import { Clock, Lock, Sparkles, Star } from "lucide-react";
 import { XPBadge } from "@/components/landing/shared";
 import { SAMPLE_QUEST } from "@/lib/landing/content";
 import { revealOnce } from "@/lib/landing/motion";
 
 /* ---------------------------------------------------------------------------
-   The sample quest — a taste of the real thing, not the diagnostic itself.
+   The sample quest — not yet a real quest to take, just a preview of one.
 
-   Its own small CTA plays one sparkle on press and nothing else: the brief is
-   explicit that confetti belongs to an actually completed quest, not a
-   preview of one.
+   Everything here is content and disabled-state only; the card's structure,
+   sizing and motion timing are untouched from the version this replaces.
+   "Coming soon" reads as a product-level status, not a lock a learner needs
+   to earn their way past — see the brief's own list of words this
+   deliberately avoids.
 --------------------------------------------------------------------------- */
 
 export function QuestCardSection() {
-  const [sparked, setSparked] = useState(false);
-
   return (
     <section id="sample-quest" className="mx-auto w-full max-w-[430px] px-5 py-18 lg:max-w-3xl">
       <motion.div
@@ -30,25 +29,39 @@ export function QuestCardSection() {
         <div className="flex items-start gap-3">
           <motion.span
             className="grid size-14 shrink-0 place-items-center rounded-[16px] bg-primary-soft text-primary-ink"
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={revealOnce}
             transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Wrench className="size-6" aria-hidden />
+            <Star className="size-6" aria-hidden />
           </motion.span>
 
           <motion.div
-            className="min-w-0 flex-1"
+            className="relative min-w-0 flex-1"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={revealOnce}
             transition={{ duration: 0.35, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-[11px] font-extrabold tracking-[0.14em] text-primary-ink uppercase">
+            <span className="inline-flex items-center gap-1 rounded-[var(--radius-pill)] bg-primary-fill px-2.5 py-1 text-[10.5px] font-extrabold tracking-[0.1em] text-primary-strong uppercase">
+              <Sparkles className="size-3" aria-hidden />
               {SAMPLE_QUEST.eyebrow}
-            </p>
-            <h2 className="mt-1 font-display text-[16px] leading-snug font-extrabold">
+            </span>
+            {/* One tiny sparkle beside the badge, once, not the continuous
+                pulse the brief explicitly rules out. */}
+            <motion.span
+              aria-hidden
+              className="absolute top-0 left-[6.5rem]"
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.8] }}
+              viewport={revealOnce}
+              transition={{ duration: 0.6, delay: 0.45, ease: "easeOut" }}
+            >
+              <Sparkles className="size-3 text-primary" />
+            </motion.span>
+
+            <h2 className="mt-1.5 font-display text-[16px] leading-snug font-extrabold">
               {SAMPLE_QUEST.title}
             </h2>
           </motion.div>
@@ -85,31 +98,40 @@ export function QuestCardSection() {
           </motion.span>
         </motion.div>
 
+        <motion.p
+          className="mt-2.5 text-[12px] leading-snug text-ink-faint"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={revealOnce}
+          transition={{ duration: 0.3, delay: 0.46 }}
+        >
+          {SAMPLE_QUEST.skills.join(" · ")}
+        </motion.p>
+
         <motion.button
           type="button"
-          onClick={() => setSparked(true)}
-          className="quest-cta relative mt-4 flex min-h-12 w-full items-center justify-center rounded-[var(--radius-pill)] bg-primary text-[15px] font-extrabold text-ink"
+          disabled
+          aria-disabled="true"
+          className="mt-4 flex min-h-13 w-full cursor-not-allowed items-center justify-center gap-2 rounded-[var(--radius-pill)] bg-primary-fill text-[15px] font-extrabold text-primary-strong"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={revealOnce}
           transition={{ duration: 0.3, delay: 0.5 }}
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.98 }}
         >
+          <Lock className="size-4" aria-hidden />
           {SAMPLE_QUEST.cta}
-          {sparked && (
-            <motion.span
-              aria-hidden
-              className="absolute top-1"
-              initial={{ opacity: 1, scale: 0.6, y: 0 }}
-              animate={{ opacity: 0, scale: 1.1, y: -10 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              onAnimationComplete={() => setSparked(false)}
-            >
-              <Sparkles className="size-4 text-canvas" />
-            </motion.span>
-          )}
         </motion.button>
+
+        <motion.p
+          className="mt-2.5 flex items-center justify-center gap-1.5 text-center text-[12.5px] text-ink-muted"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={revealOnce}
+          transition={{ duration: 0.3, delay: 0.58 }}
+        >
+          <Sparkles className="size-3 shrink-0 text-primary-strong/70" aria-hidden />
+          New practical quests are on the way.
+        </motion.p>
       </motion.div>
     </section>
   );

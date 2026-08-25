@@ -30,9 +30,10 @@ export interface JourneyCheckpoint {
 }
 
 export const JOURNEY_CHECKPOINTS: JourneyCheckpoint[] = [
-  { id: "discover", label: "Discover", detail: "See your strengths" },
-  { id: "decide", label: "Decide", detail: "Make better choices" },
-  { id: "build", label: "Build", detail: "Create real impact" },
+  { id: "discover", label: "Discover", detail: "You are here" },
+  { id: "map", label: "Map", detail: "Your skills" },
+  { id: "learn", label: "Learn", detail: "Step by step" },
+  { id: "apply", label: "Apply", detail: "At work" },
 ];
 
 export interface RouteStep {
@@ -70,38 +71,14 @@ export const ROUTE_STEPS: RouteStep[] = [
 export interface Skill {
   id: string;
   name: string;
-  level: number;
-  totalLevels: number;
-  status: string;
+  percent: number;
   accent: Accent;
 }
 
 export const SKILLS: Skill[] = [
-  { id: "ai-fluency", name: "AI fluency", level: 4, totalLevels: 5, status: "Strong", accent: "amber" },
-  {
-    id: "technical-collaboration",
-    name: "Technical collaboration",
-    level: 3,
-    totalLevels: 5,
-    status: "Developing",
-    accent: "sky",
-  },
-  {
-    id: "product-judgment",
-    name: "Product judgment",
-    level: 2,
-    totalLevels: 5,
-    status: "Developing",
-    accent: "lavender",
-  },
-  {
-    id: "building-with-tools",
-    name: "Building with tools",
-    level: 1,
-    totalLevels: 5,
-    status: "Just getting started",
-    accent: "coral",
-  },
+  { id: "problem-solving", name: "Problem solving", percent: 82, accent: "lavender" },
+  { id: "collaboration", name: "Collaboration", percent: 74, accent: "teal" },
+  { id: "ai-mindset", name: "AI mindset", percent: 56, accent: "amber" },
 ];
 
 export interface Benefit {
@@ -144,12 +121,14 @@ export const BENEFITS: Benefit[] = [
 ];
 
 export const SAMPLE_QUEST = {
-  eyebrow: "Sample quest",
-  title: "Help your team choose the right AI tool",
-  description: "Compare tools, evaluate trade-offs and recommend what is best for your team.",
+  eyebrow: "Coming soon",
+  title: "Analyze user feedback with AI",
+  description:
+    "Use AI to turn messy user feedback into clear themes, priorities, and actionable insights.",
   minutes: 10,
-  xp: 100,
-  cta: "Try a sample quest →",
+  xp: 150,
+  skills: ["AI Usage", "Data Interpretation", "Problem Solving"],
+  cta: "Quest coming soon",
 };
 
 export const TESTIMONIAL = {

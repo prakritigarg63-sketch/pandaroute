@@ -13,7 +13,12 @@ export type PrototypeEvent =
   | "diagnostic_intro_abandoned"
   | "current_role_dropdown_opened"
   | "current_role_dropdown_closed"
-  | "disabled_role_clicked";
+  | "disabled_role_clicked"
+  | "login_started"
+  | "login_succeeded"
+  | "signup_started"
+  | "signup_succeeded"
+  | "social_login_clicked";
 
 export interface TrackedEvent {
   name: PrototypeEvent;

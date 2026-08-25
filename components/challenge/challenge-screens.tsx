@@ -162,10 +162,7 @@ export function CapabilityCheck({ challenge }: { challenge: Challenge }) {
 
       <div className="sticky-cta">
         <div className="flex flex-col gap-2.5">
-          <PandaAside
-            reaction="helpful"
-            message="Good start — you already have the investigation instinct from QA. Now let's shift from “What's wrong?” to “What problem are we actually solving?”"
-          />
+          <PandaAside reaction="helpful" message={challenge.checkPanda} />
           <Button size="lg" full href={`/challenge/${challenge.id}/learn`}>
             Close my gaps →
           </Button>
@@ -299,10 +296,7 @@ export function MicroLesson({ challenge }: { challenge: Challenge }) {
 
       <div className="sticky-cta">
         <div className="flex flex-col gap-2.5">
-          <PandaAside
-            reaction="thinking"
-            message="Your QA instinct is useful here: investigate before concluding. PM thinking adds one layer — investigate the user problem before concluding on the solution."
-          />
+          <PandaAside reaction="thinking" message={challenge.learnPanda} />
           <Button size="lg" full href={`/challenge/${challenge.id}/retry`}>
             Retry challenge →
           </Button>

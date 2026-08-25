@@ -5,6 +5,13 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Compass, Menu, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { NAV_LINKS } from "@/lib/landing/content";
+import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
+
+const MENU_CTA_LABEL: Record<HomeCtaPhase, string> = {
+  new: "Start diagnostic",
+  resume: "Continue diagnostic",
+  return: "Continue my journey",
+};
 
 /* ---------------------------------------------------------------------------
    Header, scroll-progress rail and the mobile menu it opens.
@@ -32,9 +39,11 @@ export function ScrollProgressBar() {
 export function SiteHeader({
   onStart,
   starting,
+  phase,
 }: {
   onStart: () => void;
   starting: boolean;
+  phase: HomeCtaPhase;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -181,7 +190,7 @@ export function SiteHeader({
                 aria-busy={starting}
                 className="flex min-h-12 w-full items-center justify-center rounded-[var(--radius-pill)] bg-primary text-[15px] font-extrabold text-ink disabled:opacity-60"
               >
-                {starting ? "Preparing your route…" : "Start diagnostic"}
+                {starting ? "Preparing your route…" : MENU_CTA_LABEL[phase]}
               </button>
             </div>
           </div>

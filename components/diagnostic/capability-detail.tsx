@@ -43,6 +43,12 @@ export function CapabilityDetail({ capabilityId }: { capabilityId: string }) {
   const classification = result.classification;
   const isSkip = classification === "skip";
   const challenge = challengeForCapability(capabilityId);
+  // Prioritization has no generic challenge — its real practice loop lives in
+  // the target-role flow, added after this screen. Route there instead of
+  // falling through to "Back to my route", which reads as a dead end on a
+  // capability the Gap Map just told the learner to practice.
+  const practiceHref =
+    capabilityId === "prioritization" ? "/role/challenge/decision" : undefined;
 
   return (
     <div className="screen">
@@ -105,9 +111,17 @@ export function CapabilityDetail({ capabilityId }: { capabilityId: string }) {
           <Button size="lg" full variant="outline" href="/gap-map">
             Back to my Gap Map
           </Button>
+        ) : challenge ? (
+          <Button size="lg" full href={`/challenge/${challenge.id}`}>
+            Start challenge →
+          </Button>
+        ) : practiceHref ? (
+          <Button size="lg" full href={practiceHref}>
+            Practice with a real job scenario →
+          </Button>
         ) : (
-          <Button size="lg" full href={challenge ? `/challenge/${challenge.id}` : "/route"}>
-            {challenge ? "Start challenge →" : "Back to my route"}
+          <Button size="lg" full variant="outline" href="/route">
+            Back to my route
           </Button>
         )}
       </div>

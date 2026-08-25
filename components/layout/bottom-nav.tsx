@@ -10,13 +10,13 @@ import { cn } from "@/lib/cn";
    Hidden during the diagnostic — that flow is deliberately one-way — and shown
    once the learner has a route to come back to.
 
-   Route, Challenges and Progress exist. Home and Profile are drawn but inert
-   rather than linked to empty screens: a tab that goes nowhere is worse than a
-   tab that says "not yet".
+   Home, Route, Challenges and Progress exist. Profile is drawn but inert
+   rather than linked to an empty screen: a tab that goes nowhere is worse
+   than a tab that says "not yet".
 --------------------------------------------------------------------------- */
 
 const ITEMS = [
-  { id: "home", label: "Home", icon: Home, href: null },
+  { id: "home", label: "Home", icon: Home, href: "/home" },
   { id: "route", label: "Route", icon: Compass, href: "/route" },
   { id: "challenges", label: "Challenges", icon: Puzzle, href: "/challenges" },
   { id: "progress", label: "Progress", icon: TrendingUp, href: "/milestone" },
@@ -46,6 +46,14 @@ export function BottomNav({ active }: { active: string }) {
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
+                  onClick={(event) => {
+                    // Already on Home: scroll to top instead of a no-op
+                    // navigation to the page already showing.
+                    if (item.id !== "home" || !isActive) return;
+                    event.preventDefault();
+                    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                    window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+                  }}
                   className={cn(
                     "flex min-h-11 flex-col items-center justify-center gap-1 rounded-[var(--radius-tile)] py-1 transition-colors",
                     isActive ? "text-primary-ink" : "text-ink-faint hover:text-ink-muted",

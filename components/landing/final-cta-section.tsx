@@ -4,6 +4,13 @@ import { motion } from "framer-motion";
 import { PandaGuide } from "@/components/landing/panda-guide";
 import { DiagnosticButtonContent } from "@/components/landing/shared";
 import { revealOnce } from "@/lib/landing/motion";
+import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
+
+const CTA_LABEL: Record<HomeCtaPhase, string> = {
+  new: "Start the 10-minute diagnostic →",
+  resume: "Continue where you left off →",
+  return: "Continue my journey →",
+};
 
 /* ---------------------------------------------------------------------------
    The closing conversion card.
@@ -16,10 +23,12 @@ import { revealOnce } from "@/lib/landing/motion";
 export function FinalCtaSection({
   onStart,
   starting,
+  phase,
   finalCtaRef,
 }: {
   onStart: () => void;
   starting: boolean;
+  phase: HomeCtaPhase;
   finalCtaRef: React.RefObject<HTMLElement | null>;
 }) {
   return (
@@ -79,10 +88,7 @@ export function FinalCtaSection({
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <DiagnosticButtonContent
-                starting={starting}
-                idleLabel="Start the 10-minute diagnostic →"
-              />
+              <DiagnosticButtonContent starting={starting} idleLabel={CTA_LABEL[phase]} />
             </motion.button>
 
             <motion.div

@@ -24,7 +24,7 @@ export const GUIDE_ART = "/panda-mascot.png";
 const ART_RATIO = 240 / 256;
 
 export type GuideVariant = "explorer" | "coach" | "celebrating" | "compass";
-export type GuideMood = "encouraging" | "neutral";
+export type GuideMood = "encouraging" | "welcoming" | "neutral";
 
 const SIZE_PX: Record<"small" | "medium" | "large", number> = {
   small: 72,
@@ -79,7 +79,9 @@ export function PandaGuide({
         alt={
           mood === "encouraging"
             ? "Panda, your PandaRoute guide, ready to explore with you"
-            : ""
+            : mood === "welcoming"
+              ? "Panda, your PandaRoute guide, waving hello"
+              : ""
         }
         width={width}
         height={height}

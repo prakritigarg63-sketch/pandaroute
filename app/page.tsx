@@ -1,5 +1,7 @@
-import { LandingPage } from "@/components/landing/landing-page";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return <LandingPage />;
+// PandaRoute's Home page lives at /home now — see components/landing/landing-page.tsx.
+// This keeps `/` working for anyone who already has it bookmarked.
+export default function Page() {
+  redirect("/home");
 }

@@ -144,14 +144,16 @@ export function PandaCoach({
 export function DiagnosticButtonContent({
   starting,
   idleLabel,
+  busyLabel = "Preparing your route…",
 }: {
   starting: boolean;
   idleLabel: string;
+  busyLabel?: string;
 }) {
   return starting ? (
     <>
       <Compass className="size-4.5 animate-spin [animation-duration:1.1s]" aria-hidden />
-      Preparing your route…
+      {busyLabel}
     </>
   ) : (
     idleLabel

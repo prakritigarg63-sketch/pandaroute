@@ -22,6 +22,8 @@ import {
 } from "@/lib/career/portfolio";
 import { longEnough, saveInterview, useCareer } from "@/lib/career/use-career";
 import { progression, useLoop } from "@/lib/challenge/use-challenge";
+import { TRACKED_REQUIREMENT_IDS } from "@/lib/target-role/data";
+import { resolveRequirements, useTargetRole } from "@/lib/target-role/use-target-role";
 
 /* ---------------------------------------------------------------------------
    Interview practice.
@@ -484,14 +486,62 @@ export function InterviewReady() {
 
 export function CareerKit() {
   const career = useCareer();
-  const counts = progression(useLoop());
+  const loop = useLoop();
+  const counts = progression(loop);
+  const targetRole = useTargetRole();
 
   const hasCase = career.caseStatus !== "none";
   const storyReady = career.interview?.status === "ready";
+  const rolePrepared = targetRole.status === "prepared";
+
+  // The role is still "developing" only while its shared capability actually
+  // says so — once the role-prep challenge verifies it, this card has to stop
+  // claiming otherwise.
+  const stillDeveloping = loop.capabilities.prioritization !== "verified";
+
+  const requirements = rolePrepared
+    ? resolveRequirements(targetRole).filter((r) => TRACKED_REQUIREMENT_IDS.includes(r.id))
+    : [];
+  const supported = requirements.filter((r) => r.evidenceStatus === "proven").length;
 
   return (
     <div className="screen screen-flush">
       <h1 className="text-[25px] leading-tight font-extrabold">Your Career Kit 💼</h1>
+
+      <section className="mt-4">
+        <h2 className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
+          Target role
+        </h2>
+        {rolePrepared ? (
+          <div className="mt-2 rounded-[var(--radius-card)] border border-primary-strong/35 bg-primary-soft p-3.5">
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-2 text-[16px] leading-snug font-extrabold">
+                <span aria-hidden>💼</span>
+                {targetRole.roleTitle}
+              </p>
+              <span className="flex shrink-0 items-center gap-1 rounded-[var(--radius-pill)] bg-success/15 px-2 py-0.5 text-[10.5px] font-bold text-success">
+                <Check className="size-3 shrink-0" aria-hidden />
+                Prepared
+              </span>
+            </div>
+            {targetRole.company && (
+              <p className="mt-1 text-[12.5px] text-ink-muted">{targetRole.company}</p>
+            )}
+          </div>
+        ) : (
+          <Link
+            href="/role"
+            className="mt-2 flex items-center gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3.5 transition-colors hover:bg-sunk/40"
+          >
+            <span className="text-[18px] leading-none" aria-hidden>
+              🎯
+            </span>
+            <span className="min-w-0 flex-1 text-[14px] leading-snug font-bold">
+              Test yourself against a real PM role
+            </span>
+          </Link>
+        )}
+      </section>
 
       <section className="mt-4">
         <h2 className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
@@ -554,38 +604,71 @@ export function CareerKit() {
         </Link>
       </section>
 
-      <section className="mt-4">
-        <h2 className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
-          Still developing
-        </h2>
-        <Link
-          href="/gap-map/prioritization"
-          className="mt-2 flex items-center gap-3 rounded-[var(--radius-card)] border border-primary-strong/30 bg-primary-soft p-3.5"
-        >
-          <CircleDot className="size-4 shrink-0 text-primary-strong" aria-hidden />
-          <span className="min-w-0 flex-1 text-[14px] leading-snug font-bold">
-            Prioritization
-          </span>
-        </Link>
-      </section>
+      {stillDeveloping && (
+        <section className="mt-4">
+          <h2 className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
+            Still developing
+          </h2>
+          <Link
+            href="/gap-map/prioritization"
+            className="mt-2 flex items-center gap-3 rounded-[var(--radius-card)] border border-primary-strong/30 bg-primary-soft p-3.5"
+          >
+            <CircleDot className="size-4 shrink-0 text-primary-strong" aria-hidden />
+            <span className="min-w-0 flex-1 text-[14px] leading-snug font-bold">
+              Prioritization
+            </span>
+          </Link>
+        </section>
+      )}
+
+      {rolePrepared && (
+        <section className="mt-4">
+          <h2 className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
+            Role alignment
+          </h2>
+          <div className="mt-2 flex items-center gap-3 rounded-[var(--radius-card)] border border-success/30 bg-skip-soft p-3.5">
+            <span className="text-[18px] leading-none" aria-hidden>
+              🎯
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[14px] leading-snug font-bold">
+                Core requirements supported
+              </span>
+              <span className="tnum mt-0.5 block text-[12.5px] text-ink-muted">
+                {supported} of {requirements.length} for {targetRole.roleTitle}
+              </span>
+            </span>
+          </div>
+        </section>
+      )}
 
       <Card className="mt-5 border-primary-strong/40 bg-primary-soft">
         <p className="text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
-          Recommended next action
+          {rolePrepared ? "Next action" : "Recommended next action"}
         </p>
         <p className="mt-1 text-[15px] leading-snug font-bold">
-          Practice a Prioritization interview question
+          {rolePrepared
+            ? `Practice your ${targetRole.roleTitle} interview`
+            : "Practice a Prioritization interview question"}
         </p>
         <p className="mt-1 text-[13px] leading-snug text-ink-muted">
-          Strengthen your remaining gap while creating another interview story.
+          {rolePrepared
+            ? "Focus on the capabilities this role emphasizes."
+            : "Strengthen your remaining gap while creating another interview story."}
         </p>
         <Button size="md" full className="mt-3" href="/interview">
-          Start practice →
+          {rolePrepared ? "Start role-specific practice →" : "Start practice →"}
         </Button>
       </Card>
 
       <div className="mt-auto flex flex-col gap-2.5 pt-5">
-        <PandaAside message="Every step you take builds stronger proof for your PM transition." />
+        <PandaAside
+          message={
+            rolePrepared
+              ? "Your route now adapts to the opportunity you're pursuing."
+              : "Every step you take builds stronger proof for your PM transition."
+          }
+        />
       </div>
 
       <BottomNav active="progress" />
