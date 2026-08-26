@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, CircleDot } from "lucide-react";
+import { Check, CircleDot, Copy } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -223,18 +223,65 @@ export function CapstoneComplete() {
   );
 }
 
+/** Plain text so it pastes cleanly into an email, a LinkedIn message, anywhere. */
+function proofAsText(earned: boolean): string {
+  const lines = [
+    CAPSTONE.proof.title,
+    "QA / Test Analyst → Product Manager",
+    "",
+    earned ? CAPSTONE.proof.badge : "Capstone · Not yet completed",
+    "",
+    "Challenge",
+    CAPSTONE.proof.challenge,
+    "",
+    "What I demonstrated",
+    ...CAPSTONE.proof.demonstrated.map((item) => `- ${item}`),
+    "",
+    `Capabilities: ${CAPSTONE.proof.chips.join(", ")}`,
+  ];
+  return lines.join("\n");
+}
+
 export function ProofOfCapability() {
   const state = useCapstone();
   const loop = useLoop();
   const earned = state.completed || loop.proofItems.length > 0;
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(proofAsText(earned));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard permission can be denied; the button just stays as-is
+      // rather than pretending it worked.
+    }
+  };
 
   return (
     <div className="screen">
       <div className="gps-rise flex flex-1 flex-col">
-        <h1 className="text-[24px] leading-tight font-extrabold">Your Proof 🏆</h1>
-        <p className="mt-0.5 text-[13px] font-semibold text-ink-muted">
-          QA / Test Analyst → Product Manager
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-[24px] leading-tight font-extrabold">Your Proof 🏆</h1>
+            <p className="mt-0.5 text-[13px] font-semibold text-ink-muted">
+              QA / Test Analyst → Product Manager
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={copy}
+            className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] border border-line bg-surface px-3 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink"
+          >
+            {copied ? (
+              <Check className="size-3.5 text-success" aria-hidden />
+            ) : (
+              <Copy className="size-3.5" aria-hidden />
+            )}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
 
         <Card className="mt-4 border-primary-strong/35">
           <p className="text-[17px] leading-snug font-extrabold">{CAPSTONE.proof.title}</p>
@@ -282,6 +329,13 @@ export function ProofOfCapability() {
           <PandaAside message={CAPSTONE.panda.proof} />
           <Button size="lg" full href="/readiness">
             Continue to readiness →
+          </Button>
+          {/* This is the only pointer from the proof itself toward turning it
+              into a portfolio case — without it, that path only exists at the
+              bottom of Readiness, and Career Kit shows "not started" the
+              whole time a learner hasn't stumbled onto it. */}
+          <Button size="lg" full variant="outline" href="/next-steps">
+            Turn this into a portfolio story →
           </Button>
         </div>
       </div>

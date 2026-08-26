@@ -18,7 +18,7 @@ import { progression, useLoop, type CapabilityStatus } from "@/lib/challenge/use
    No percentage. A number like "87% PM ready" would be invented, and the whole
    product argues against invented measures — so this screen is a list of what
    the learner has evidence for, grouped the way a hiring conversation is, with
-   the QA-credited strengths shown as exactly that.
+   the QA-demonstrated strengths shown as exactly that.
 --------------------------------------------------------------------------- */
 
 const GROUPS: Array<{ name: string; ids: string[] }> = [
@@ -35,8 +35,8 @@ const STATUS_LABEL: Partial<Record<CapabilityStatus, string>> = {
   verified: "Verified",
   developing: "Developing",
   learn: "Learn",
-  practice: "Practice",
-  skip: "Credited",
+  practice: "Strengthen",
+  skip: "Demonstrated",
   "in-progress": "In progress",
 };
 
@@ -160,7 +160,7 @@ export function CareerReadiness() {
                   {capability.name}
                 </span>
                 <span className="shrink-0 text-[10px] font-bold tracking-[0.08em] text-skip uppercase">
-                  Credited
+                  Demonstrated
                 </span>
               </li>
             ))}

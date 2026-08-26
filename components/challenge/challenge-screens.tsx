@@ -461,7 +461,7 @@ export function CapabilityVerified({ challenge }: { challenge: Challenge }) {
       <div className="mt-4 flex flex-col gap-2.5">
         <PandaAside
           mascot={false}
-          message="You didn't just learn Product Discovery. You proved you can apply it. 🐼"
+          message={`You didn't just learn ${challenge.verifiedName}. You proved you can apply it. 🐼`}
         />
         <Button size="lg" full href="/route">
           Continue my route →
