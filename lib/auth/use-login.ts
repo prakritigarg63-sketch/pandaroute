@@ -16,11 +16,12 @@ import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
    succeeds. Nothing is checked against a stored account, because none exist.
    See the summary for this as a stated assumption, not an oversight.
 
-   Destination: same proxy `useHomeCta` uses for "new" on Home — no
-   diagnostic answers in this browser yet means there's nothing on /route to
-   show, so a new user lands on the diagnostic's entry point instead, the
-   same place Home would have sent them before the sign-in gate. A returning
-   user with progress goes straight to their route.
+   Destination: Home's "new" phase sends people to Signup, not here — this
+   screen is reached by choice (the "Already have an account? Sign in" link)
+   or a bookmark, so it still needs its own fallback: no diagnostic answers
+   in this browser yet means there's nothing on /route to show, so that case
+   lands on the diagnostic's entry point instead. A returning user with
+   progress goes straight to their route.
 --------------------------------------------------------------------------- */
 
 const AUTH_MS = 550;

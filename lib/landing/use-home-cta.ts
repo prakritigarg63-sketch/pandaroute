@@ -15,10 +15,14 @@ import { useStartDiagnostic } from "@/lib/landing/use-start-diagnostic";
    rather than being asked to start over.
 
    "new" is the one phase with no progress to protect, so it's also the one
-   place a sign-in gate belongs: send them to log in or create an account
-   first, and login/signup hand off to the diagnostic's entry point from
-   there (see use-login.ts / use-signup.ts). Someone already mid-diagnostic
-   or already done isn't asked to sign in again just to keep going.
+   place a sign-in gate belongs: send them to create an account first — this
+   is by definition someone who has never been through the diagnostic here,
+   so Signup's "welcome, future pathfinder" framing is the one that's true,
+   not Login's "welcome back". Login stays one tap away from Signup for
+   anyone who already has progress on another device. Signup hands off to
+   the diagnostic's entry point from there (see use-signup.ts). Someone
+   already mid-diagnostic or already done isn't asked to sign in again just
+   to keep going.
 --------------------------------------------------------------------------- */
 
 export type HomeCtaPhase = "new" | "resume" | "return";
@@ -29,7 +33,7 @@ export function useHomeCta() {
   const completed = diagnostic.completedAt !== null;
 
   const phase: HomeCtaPhase = completed ? "return" : answered ? "resume" : "new";
-  const destination = phase === "return" ? "/route" : phase === "new" ? "/login" : undefined; // undefined → the diagnostic entry point
+  const destination = phase === "return" ? "/route" : phase === "new" ? "/signup" : undefined; // undefined → the diagnostic entry point
 
   const { starting, start } = useStartDiagnostic(destination);
 
