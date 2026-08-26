@@ -23,7 +23,7 @@ export const ONBOARDING_BENEFITS = [
   {
     id: "gaps",
     title: "Find your gaps",
-    body: "Know what to **Learn**, **Practice**, or **Skip** based on what you already know.",
+    body: "Know what to **Learn**, **Strengthen**, or mark **Demonstrated** based on what you already know.",
   },
   {
     id: "learn",

@@ -107,7 +107,11 @@ export function QuestionScreen({ index }: { index: number }) {
         </span>
       </div>
 
-      <div key={question.id} className="gps-rise mt-5 flex flex-1 flex-col">
+      {/* pb-36 keeps the last option clear of the sticky Panda + CTA dock
+          below: on a 3-4 option question the list can run right up against
+          it, and without this the dock covers the last option instead of
+          sitting cleanly beneath it. */}
+      <div key={question.id} className="gps-rise mt-5 flex flex-1 flex-col pb-36">
         <span className="self-start rounded-[var(--radius-pill)] bg-primary-soft px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] text-primary-ink uppercase">
           {question.tag}
         </span>

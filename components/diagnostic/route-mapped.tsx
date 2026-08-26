@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { PandaMascot } from "@/components/panda/panda-mascot";
 import { PandaAside } from "@/components/panda/panda-aside";
-import { CAPABILITIES, type Classification } from "@/lib/diagnostic/capabilities";
+import { CAPABILITIES, CLASSIFICATION_LABEL, type Classification } from "@/lib/diagnostic/capabilities";
 import { classifyAnswers, countBy } from "@/lib/diagnostic/scoring";
 import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
 
@@ -62,8 +62,8 @@ export function RouteMapped() {
               )}
             >
               <p className="tnum text-[22px] leading-none font-extrabold">{tile.count}</p>
-              <p className="mt-1 text-[11px] leading-tight font-semibold capitalize">
-                {tile.key}
+              <p className="mt-1 text-[11px] leading-tight font-semibold">
+                {CLASSIFICATION_LABEL[tile.key]}
               </p>
             </div>
           ))}
