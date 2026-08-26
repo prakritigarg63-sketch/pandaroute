@@ -66,7 +66,7 @@
   --font-display: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
   --font-body: var(--font-inter), "Segoe UI", system-ui, sans-serif;
 
-  --radius-card: 0.875rem;
+  --radius-card: 1.125rem; /* 18px — the mobile card-radius floor across the app */
   --radius-tile: 0.75rem;
   --radius-pill: 9999px;
 

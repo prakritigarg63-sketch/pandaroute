@@ -10,9 +10,7 @@ import { cn } from "@/lib/cn";
    Hidden during the diagnostic — that flow is deliberately one-way — and shown
    once the learner has a route to come back to.
 
-   Home, Route, Challenges and Progress exist. Profile is drawn but inert
-   rather than linked to an empty screen: a tab that goes nowhere is worse
-   than a tab that says "not yet".
+   All five tabs are real routes now.
 --------------------------------------------------------------------------- */
 
 const ITEMS = [
@@ -20,7 +18,7 @@ const ITEMS = [
   { id: "route", label: "Route", icon: Compass, href: "/route" },
   { id: "challenges", label: "Challenges", icon: Puzzle, href: "/challenges" },
   { id: "progress", label: "Progress", icon: TrendingUp, href: "/milestone" },
-  { id: "profile", label: "Profile", icon: User, href: null },
+  { id: "profile", label: "Profile", icon: User, href: "/profile" },
 ] as const;
 
 export function BottomNav({ active }: { active: string }) {

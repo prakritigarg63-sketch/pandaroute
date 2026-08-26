@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@/lib/analytics";
 import { isValidEmail } from "@/lib/auth/use-login";
+import { saveProfileIdentity } from "@/lib/profile/use-profile";
 
 /* ---------------------------------------------------------------------------
    Signup — the same honest prototype as login.
@@ -66,6 +67,7 @@ export function useSignup() {
       window.setTimeout(() => {
         setPhase("success");
         track("signup_succeeded");
+        saveProfileIdentity({ name: name.trim(), email: email.trim() });
         window.setTimeout(() => router.push(DESTINATION), CELEBRATE_MS);
       }, SUBMIT_MS);
 

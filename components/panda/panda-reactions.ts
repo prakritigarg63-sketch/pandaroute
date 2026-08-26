@@ -86,7 +86,7 @@ export const START_CUE: PandaCue = {
 export const CARD_CUES: Record<string, PandaCue> = {
   gaps: {
     reaction: "thinking",
-    message: "I'll help you separate what to Learn, Practice, and Skip.",
+    message: "I'll help you separate what to Learn, Strengthen, and what you've already Demonstrated.",
   },
   learn: {
     reaction: "helpful",

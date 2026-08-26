@@ -34,7 +34,7 @@ export function QuestHeader({ xp, awarded }: { xp: string; awarded: boolean }) {
         <Compass className="size-4" aria-hidden />
       </span>
 
-      <h1 className="font-display text-[18px] leading-none font-extrabold tracking-tight whitespace-nowrap">
+      <h1 className="min-w-0 truncate font-display text-[18px] leading-none font-extrabold tracking-tight">
         {QUEST_COPY.title}
       </h1>
 

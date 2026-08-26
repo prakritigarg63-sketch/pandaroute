@@ -136,14 +136,19 @@ export function reasonFor(capability: Capability, classification: Classification
   }
 }
 
+// Internal ids stay "learn" / "practice" / "skip" everywhere in code — only
+// the label shown to the learner changed ("Skip" read as ignored curriculum
+// rather than demonstrated capability). Every screen that renders a
+// classification goes through this map, so the new wording is consistent
+// everywhere in one edit rather than a rename scattered across files.
 export const CLASSIFICATION_LABEL: Record<Classification, string> = {
   learn: "Learn",
-  practice: "Practice",
-  skip: "Skip",
+  practice: "Strengthen",
+  skip: "Demonstrated",
 };
 
 export const CLASSIFICATION_MEANING: Record<Classification, string> = {
   learn: "Build the foundation",
   practice: "You know some of this — apply it more",
-  skip: "Existing experience already covers this",
+  skip: "You've already demonstrated this — no need to relearn it",
 };
