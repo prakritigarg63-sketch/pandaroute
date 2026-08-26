@@ -13,6 +13,12 @@ import { useStartDiagnostic } from "@/lib/landing/use-start-diagnostic";
    exactly what the rest of the app already treats as "have they started."
    Three phases, not two: someone mid-diagnostic gets pointed back at it
    rather than being asked to start over.
+
+   "new" is the one phase with no progress to protect, so it's also the one
+   place a sign-in gate belongs: send them to log in or create an account
+   first, and login/signup hand off to the diagnostic's entry point from
+   there (see use-login.ts / use-signup.ts). Someone already mid-diagnostic
+   or already done isn't asked to sign in again just to keep going.
 --------------------------------------------------------------------------- */
 
 export type HomeCtaPhase = "new" | "resume" | "return";
@@ -23,7 +29,7 @@ export function useHomeCta() {
   const completed = diagnostic.completedAt !== null;
 
   const phase: HomeCtaPhase = completed ? "return" : answered ? "resume" : "new";
-  const destination = phase === "return" ? "/route" : undefined; // undefined → the diagnostic entry point
+  const destination = phase === "return" ? "/route" : phase === "new" ? "/login" : undefined; // undefined → the diagnostic entry point
 
   const { starting, start } = useStartDiagnostic(destination);
 

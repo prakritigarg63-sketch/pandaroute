@@ -18,8 +18,9 @@ import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
 
    Destination: same proxy `useHomeCta` uses for "new" on Home — no
    diagnostic answers in this browser yet means there's nothing on /route to
-   show, so a new user lands on Home instead and sees the real starting
-   point. A returning user with progress goes straight to their route.
+   show, so a new user lands on the diagnostic's entry point instead, the
+   same place Home would have sent them before the sign-in gate. A returning
+   user with progress goes straight to their route.
 --------------------------------------------------------------------------- */
 
 const AUTH_MS = 550;
@@ -64,7 +65,7 @@ export function useLogin() {
       window.setTimeout(() => {
         setPhase("success");
         track("login_succeeded");
-        window.setTimeout(() => router.push(isNewUser ? "/home" : "/route"), CELEBRATE_MS);
+        window.setTimeout(() => router.push(isNewUser ? "/onboarding" : "/route"), CELEBRATE_MS);
       }, AUTH_MS);
 
       return {};

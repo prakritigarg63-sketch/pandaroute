@@ -17,7 +17,8 @@ import { useReducedMotionPreference } from "@/lib/landing/use-reduced-motion";
    Structurally the login screen's sibling — same header lockup, same waving
    panda, same field styling, same guarded-submit CTA pattern — with a
    different form (name added, password confirmed) and a different close: no
-   journey-reminder card (there's no journey yet), straight to Home.
+   journey-reminder card (there's no journey yet), straight into the
+   diagnostic's entry point instead.
 --------------------------------------------------------------------------- */
 
 export function SignupPage() {

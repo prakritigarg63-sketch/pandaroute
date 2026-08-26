@@ -12,12 +12,13 @@ import { saveProfileIdentity } from "@/lib/profile/use-profile";
    No backend, no Firebase, no account store — see use-login.ts for the full
    reasoning. "Create an account" here means: validate the form for real,
    then treat any syntactically valid submission as a new signup and hand off
-   to Home. There is no way to check whether the email "already exists"
-   without a real user store, so that branch from the brief isn't
-   implemented — every valid submission takes the new-user path.
+   to the diagnostic's entry point — the same place Home's CTA would have
+   sent them before the sign-in gate. There is no way to check whether the
+   email "already exists" without a real user store, so that branch from the
+   brief isn't implemented — every valid submission takes the new-user path.
 --------------------------------------------------------------------------- */
 
-const DESTINATION = "/home";
+const DESTINATION = "/onboarding";
 const SUBMIT_MS = 550;
 const CELEBRATE_MS = 550;
 const MIN_PASSWORD_LENGTH = 6;
