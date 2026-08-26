@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 
-// PandaRoute's Home page lives at /home now — see components/landing/landing-page.tsx.
-// This keeps `/` working for anyone who already has it bookmarked.
+// The app now opens on sign-in — see components/auth/login-page.tsx. Login and
+// signup both hand off to Home (or Route, for a returning user) on success;
+// see lib/auth/use-login.ts and lib/auth/use-signup.ts.
 export default function Page() {
-  redirect("/home");
+  redirect("/login");
 }

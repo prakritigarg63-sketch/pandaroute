@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { Lock } from "lucide-react";
 import { PandaWelcome } from "@/components/auth/panda-welcome";
 import { LoginForm } from "@/components/auth/login-form";
@@ -134,7 +135,14 @@ export function LoginPage() {
           <JourneyReminderCard />
         </div>
 
-        <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-[13px] text-ink-muted">
+        <p className="mt-6 text-center text-[14.5px] text-ink-muted">
+          New to PandaRoute?{" "}
+          <Link href="/signup" className="font-bold text-primary-ink hover:underline">
+            Sign up
+          </Link>
+        </p>
+
+        <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-[13px] text-ink-muted">
           <Lock className="size-3.5 shrink-0" aria-hidden />
           Your progress is securely saved.
         </p>
