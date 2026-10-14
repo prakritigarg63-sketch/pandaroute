@@ -1,35 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Award, Check, CloudCheck, ListChecks, Sparkles } from "lucide-react";
-import { PandaGuide } from "@/components/landing/panda-guide";
 import { DiagnosticButtonContent } from "@/components/landing/shared";
-import { JOURNEY_CHECKPOINTS } from "@/lib/landing/content";
-import { useReducedMotionPreference } from "@/lib/landing/use-reduced-motion";
+import { WavingPanda } from "@/components/landing/waving-panda";
 import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
 
+// Anyone with saved progress (mid-diagnostic or finished) is picked up where
+// they left off by useHomeCta — the label just says so.
 const CTA_LABEL: Record<HomeCtaPhase, string> = {
-  new: "Start free diagnostic →",
-  resume: "Continue diagnostic →",
+  new: "Start my diagnostic →",
+  resume: "Continue my journey →",
   return: "Continue my journey →",
 };
+
+// "Progress saved" is true: diagnostic answers persist as they're chosen
+// (lib/diagnostic/use-diagnostic.ts) and resume at the first unanswered one.
+const DETAILS = ["10–15 minutes", "No grades", "Progress saved"];
 
 /* ---------------------------------------------------------------------------
    The hero.
 
-   Mobile stacking order is fixed by the brief — eyebrow, headline, copy, CTA,
-   facts, then the panda and its route — and that order is the actual DOM
-   order here, not a visual reorder, so it reads correctly without CSS to a
-   screen reader too. Desktop widens into two columns without touching that
-   order: the illustration moves beside the text via `lg:` grid placement, it
-   never moves before it.
---------------------------------------------------------------------------- */
+   Desktop: copy left, the waving panda right. Mobile: a compact panda and its
+   greeting first, so the welcome lands before the pitch — but small enough
+   that the headline and button still sit near the top of the screen.
 
-const FACTS = [
-  { id: "scenarios", icon: ListChecks, label: "12 scenarios" },
-  { id: "grades", icon: Check, label: "No grades" },
-  { id: "saved", icon: CloudCheck, label: "Progress saved" },
-];
+   The greeting is real text rather than part of the artwork, so it stays
+   sharp, translatable and readable by a screen reader.
+--------------------------------------------------------------------------- */
 
 export function HeroSection({
   onStart,
@@ -42,207 +38,78 @@ export function HeroSection({
   phase: HomeCtaPhase;
   heroRef: React.RefObject<HTMLElement | null>;
 }) {
-  const reduced = useReducedMotionPreference();
-
   return (
-    <section ref={heroRef} className="quest-paper relative overflow-hidden pt-8 pb-2">
-      <div className="mx-auto grid w-full max-w-[430px] gap-8 px-5 lg:max-w-5xl lg:grid-cols-2 lg:items-center lg:gap-12">
-        <div className="lg:order-1">
-          <motion.p
-            className="text-[11px] font-extrabold tracking-[0.16em] text-primary-ink uppercase"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Your AI &amp; tech journey starts here
-          </motion.p>
+    <section ref={heroRef} className="relative overflow-hidden bg-cream" aria-labelledby="hero-title">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-3 px-5 pt-2 pb-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-6 lg:px-8 lg:pt-4 lg:pb-6">
+        <figure className="relative flex items-end gap-1 lg:order-last lg:block">
+          <WavingPanda
+            sizes="(min-width: 1024px) 560px, 192px"
+            className="-ml-3 w-36 shrink-0 sm:w-48 lg:mx-auto lg:-my-6 lg:w-full lg:max-w-[min(38rem,72vh)]"
+          />
 
-          <h1 className="mt-2 font-display text-[32px] leading-[1.12] font-extrabold text-balance">
-            <motion.span
-              className="block overflow-hidden"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.4, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="block">Discover how you think.</span>
-            </motion.span>
-            <motion.span
-              className="block overflow-hidden"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.4, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="block text-primary-ink">Build what comes next.</span>
-            </motion.span>
+          <figcaption className="mb-9 lg:absolute lg:top-[4%] lg:right-[2%] lg:mb-0">
+            <SpeechBubble />
+          </figcaption>
+        </figure>
+
+        <div className="lg:py-10">
+          <p className="inline-flex rounded-[var(--radius-pill)] bg-primary-soft px-3.5 py-1.5 text-[11px] font-extrabold tracking-[0.18em] text-primary-ink uppercase lg:text-[12.5px]">
+            Your next chapter starts here
+          </p>
+
+          <h1
+            id="hero-title"
+            className="mt-4 font-display text-[34px] leading-[1.08] font-extrabold tracking-tight text-balance text-navy sm:text-[42px] lg:mt-5 lg:text-[clamp(2.4rem,3.85vw,3.15rem)]"
+            // Capped so "Discover your strengths." holds one line in the
+            // full-width copy column (the line is ~11.5em wide).
+          >
+            <span className="block">Discover your strengths.</span>
+            <span className="block text-quest-deep">Find your next step.</span>
           </h1>
 
-          <motion.p
-            className="mt-3.5 max-w-[34ch] text-[15px] leading-relaxed text-ink-muted"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            A 10–15 minute workplace diagnostic with 12 realistic scenarios. No
-            grades—just insights to help you grow with confidence.
-          </motion.p>
+          <p className="mt-4 max-w-[34rem] text-[16px] leading-relaxed text-ink-muted lg:text-[18.5px]">
+            12 workplace scenarios to understand how you think, spot your gaps, and build your path
+            forward.
+          </p>
 
-          <motion.button
+          <button
             type="button"
             onClick={onStart}
             disabled={starting}
             aria-busy={starting}
-            className="quest-cta mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] bg-primary text-[16.5px] font-extrabold text-ink disabled:cursor-default lg:w-auto lg:px-8"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="quest-cta mt-6 flex min-h-14 w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] bg-quest px-8 text-[17px] font-extrabold text-navy disabled:cursor-default sm:w-auto lg:mt-7 lg:min-h-16 lg:px-10 lg:text-[19px]"
           >
             <DiagnosticButtonContent starting={starting} idleLabel={CTA_LABEL[phase]} />
-          </motion.button>
+          </button>
 
-          <motion.ul
-            className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5"
-            initial="hidden"
-            animate="show"
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.7 } } }}
-          >
-            {FACTS.map((fact) => {
-              const Icon = fact.icon;
-              return (
-                <motion.li
-                  key={fact.id}
-                  className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-muted"
-                  variants={{ hidden: { opacity: 0, y: 6 }, show: { opacity: 1, y: 0 } }}
-                >
-                  <Icon className="size-3.5 text-primary-strong" aria-hidden />
-                  {fact.label}
-                </motion.li>
-              );
-            })}
-          </motion.ul>
-        </div>
-
-        <div className="lg:order-2">
-          <JourneyIllustration reduced={reduced} celebrate={starting} />
+          <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[14px] font-medium text-ink-muted sm:justify-start sm:pl-4 lg:text-[15px]">
+            {DETAILS.map((detail, index) => (
+              <li key={detail} className="flex items-center gap-2.5">
+                {index > 0 && <span aria-hidden className="size-1.5 rounded-full bg-quest" />}
+                {detail}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
   );
 }
 
-function JourneyIllustration({ reduced, celebrate }: { reduced: boolean; celebrate: boolean }) {
-  // The path is drawn tall-to-short in the SVG's own coordinates (top of the
-  // markup is the bottom checkpoint), so pathLength growing 0 → 1 reads as the
-  // route climbing from Discover up to Build — bottom to top, as specced.
-  // The top ~90px of the 420px column is left clear of the path and of any
-  // checkpoint so the "First Pathfinder" badge has room to sit above the
-  // route without overlapping the Build label beneath it.
-  const pathD = "M40 400 C 30 330, 55 300, 40 240 S 20 140, 40 90";
-
+function SpeechBubble() {
   return (
-    <div className="relative mx-auto flex max-w-[300px] items-end justify-center gap-2 lg:max-w-none">
-      <div className="relative h-[420px] w-[80px] shrink-0">
-        <svg
-          viewBox="0 0 80 420"
-          className="absolute inset-0 h-full w-full"
-          aria-hidden
-        >
-          <motion.path
-            d={pathD}
-            fill="none"
-            stroke="var(--color-primary)"
-            strokeWidth={4}
-            strokeLinecap="round"
-            strokeDasharray="1 10"
-            initial={reduced ? { pathLength: 1 } : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: reduced ? 0 : 1, delay: reduced ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </svg>
-
-        {JOURNEY_CHECKPOINTS.map((checkpoint, index) => (
-          <motion.div
-            key={checkpoint.id}
-            className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-center"
-            style={{ bottom: `${6 + index * 23}%` }}
-            initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.75 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{
-              duration: reduced ? 0 : 0.32,
-              delay: reduced ? 0 : 0.5 + index * 0.12,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-          >
-            <span className="relative grid size-7 place-items-center rounded-full border-2 border-primary-strong bg-primary text-[11px] font-extrabold text-ink">
-              {index + 1}
-              {!reduced && (
-                <motion.span
-                  aria-hidden
-                  className="absolute inset-0 rounded-full border-2 border-primary"
-                  initial={{ opacity: 0.6, scale: 1 }}
-                  whileInView={{ opacity: 0, scale: 1.9 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.6, delay: 0.55 + index * 0.12, ease: "easeOut" }}
-                />
-              )}
-            </span>
-            <span className="text-[11.5px] leading-none font-bold whitespace-nowrap">
-              {checkpoint.label}
-            </span>
-            <span className="text-[10px] leading-none whitespace-nowrap text-ink-muted">
-              {checkpoint.detail}
-            </span>
-          </motion.div>
-        ))}
-
-        <motion.span
-          className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-[var(--radius-pill)] border border-primary-strong/40 bg-surface px-2 py-1 text-[9.5px] font-extrabold whitespace-nowrap text-primary-ink shadow-warm"
-          initial={reduced ? { opacity: 1, y: 0 } : { opacity: 0, y: -8, scale: 0.85 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{
-            duration: reduced ? 0 : 0.4,
-            delay: reduced ? 0 : 0.9,
-            ease: [0.34, 1.3, 0.64, 1],
-          }}
-        >
-          <Award className="size-3" aria-hidden />
-          First Pathfinder
-        </motion.span>
-      </div>
-
-      <motion.div
-        className="relative"
-        initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: reduced ? 0 : 0.45, delay: reduced ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <PandaGuide variant="explorer" size="large" celebrate={celebrate} />
-        {celebrate && (
-          <span aria-hidden className="pointer-events-none absolute inset-0">
-            {[
-              { top: "6%", left: "4%", delay: "0ms" },
-              { top: "0%", right: "8%", delay: "90ms" },
-              { top: "40%", right: "-4%", delay: "160ms" },
-            ].map(({ delay, ...position }, i) => (
-              <Sparkles
-                key={i}
-                className="quest-spark absolute size-4 text-primary"
-                style={
-                  {
-                    ...position,
-                    "--dx": "0px",
-                    "--dy": "-14px",
-                    "--delay": delay,
-                  } as unknown as React.CSSProperties
-                }
-              />
-            ))}
-          </span>
-        )}
-      </motion.div>
-    </div>
+    <p className="relative rounded-[22px] border-2 border-quest/70 bg-surface px-4 py-2.5 shadow-warm lg:rounded-[28px] lg:px-6 lg:py-4">
+      <span className="block font-display text-[15px] leading-tight font-extrabold whitespace-nowrap text-navy lg:text-[24px]">
+        Hi, Pathfinder! <span aria-hidden>👋</span>
+      </span>
+      <span className="mt-0.5 block text-[13px] leading-snug text-ink lg:mt-1 lg:text-[17px]">
+        Let&apos;s find your way forward.
+      </span>
+      {/* The tail points down-left at the panda on desktop, left on mobile. */}
+      <span
+        aria-hidden
+        className="absolute -bottom-[9px] left-5 size-4 rotate-45 border-r-2 border-b-2 border-quest/70 bg-surface max-lg:top-1/2 max-lg:-left-[9px] max-lg:-translate-y-1/2 max-lg:rotate-[135deg] lg:left-auto lg:right-[58%]"
+      />
+    </p>
   );
 }

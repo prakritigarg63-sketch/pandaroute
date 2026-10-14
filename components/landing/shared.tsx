@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
-import { Compass, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Compass } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { PandaGuide } from "@/components/landing/panda-guide";
-import { motionTokens, revealOnce, riseIn } from "@/lib/landing/motion";
+import { revealOnce, riseIn } from "@/lib/landing/motion";
 
 /* ---------------------------------------------------------------------------
    Small building blocks reused across the landing sections.
@@ -61,85 +59,10 @@ export function XPBadge({ value, className }: { value: string; className?: strin
 }
 
 /**
- * Counts up once, the moment it scrolls into view, and never resets — a
- * counter that replays every time you scroll past it reads as decoration, not
- * a number.
- */
-export function AnimatedCounter({
-  to,
-  suffix = "",
-  className,
-}: {
-  to: number;
-  suffix?: string;
-  className?: string;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-
-    const duration = 700;
-    const start = performance.now();
-
-    let frame: number;
-    const step = (now: number) => {
-      const progress = Math.min(1, (now - start) / duration);
-      setValue(Math.round(to * (1 - Math.pow(1 - progress, 3))));
-      if (progress < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-
-    return () => cancelAnimationFrame(frame);
-  }, [inView, to]);
-
-  return (
-    <span ref={ref} className={cn("tnum", className)}>
-      {value}
-      {suffix}
-    </span>
-  );
-}
-
-/**
- * The landing page's own coaching bubble. Deliberately not the in-app
- * PandaAside/reaction system — this page has no diagnostic state to react to,
- * just a handful of fixed, encouraging lines beside a small guide.
- */
-export function PandaCoach({
-  message,
-  variant = "coach",
-  className,
-}: {
-  message: string;
-  variant?: "coach" | "compass";
-  className?: string;
-}) {
-  return (
-    <motion.div
-      className={cn("flex items-end gap-2.5", className)}
-      variants={riseIn}
-      initial="hidden"
-      whileInView="show"
-      viewport={revealOnce}
-    >
-      <PandaGuide variant={variant} size="small" />
-
-      <div className="relative flex-1 rounded-[18px] rounded-bl-sm border border-line bg-surface p-3 shadow-warm">
-        <Sparkles aria-hidden className="absolute top-2.5 right-2.5 size-3.5 text-quest-bright" />
-        <p className="pr-5 text-[13.5px] leading-snug text-ink">{message}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-/**
  * What every `startDiagnostic()` button shows once pressed: the arrow is
  * replaced by a spinning compass and the label becomes "Preparing your
- * route…", so all four CTAs on the page read as one action in progress rather
- * than four buttons each doing their own thing.
+ * route…", so all the CTAs on the page read as one action in progress rather
+ * than buttons each doing their own thing.
  */
 export function DiagnosticButtonContent({
   starting,
@@ -161,7 +84,7 @@ export function DiagnosticButtonContent({
 }
 
 /** One polite live region for the whole page — screen readers hear the state
- *  change exactly once, regardless of which of the four CTAs triggered it. */
+ *  change exactly once, regardless of which CTA triggered it. */
 export function DiagnosticStatus({ starting }: { starting: boolean }) {
   return (
     <p role="status" aria-live="polite" className="sr-only">
@@ -169,6 +92,3 @@ export function DiagnosticStatus({ starting }: { starting: boolean }) {
     </p>
   );
 }
-
-export const fadeUp = riseIn;
-export const durations = motionTokens.duration;

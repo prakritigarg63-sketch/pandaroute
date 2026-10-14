@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { DiagnosticRequired } from "@/components/diagnostic/diagnostic-required";
 import {
   CAPABILITY_BY_ID,
   CLASSIFICATION_LABEL,
@@ -79,7 +80,9 @@ export function RouteScreen() {
   const loop = useLoop();
   const counts = progression(loop);
 
-  const rows = classifyAnswers(diagnostic.answers)
+  if (diagnostic.completedAt === null) return <DiagnosticRequired title="Your Route" active="route" />;
+
+  const rows =classifyAnswers(diagnostic.answers)
     .map((result) => ({
       capability: CAPABILITY_BY_ID.get(result.capabilityId),
       classification: result.classification as Classification,
@@ -114,112 +117,116 @@ export function RouteScreen() {
           : "QA → Product Manager"}
       </p>
 
-      <ul className="mt-3.5 grid grid-cols-4 gap-2">
-        {[
-          { icon: "🏆", value: counts.verified, label: "Verified" },
-          { icon: "🧩", value: counts.challengesCompleted, label: "Completed" },
-          { icon: "🧭", value: gapsLeft, label: "Gaps left" },
-          { icon: "🔥", value: counts.activeDays, label: "Day streak" },
-        ].map((stat) => (
-          <li
-            key={stat.label}
-            className="rounded-[var(--radius-card)] border border-line bg-surface px-1 py-2.5 text-center"
-          >
-            <p className="text-[15px] leading-none" aria-hidden>
-              {stat.icon}
-            </p>
-            <p className="tnum mt-1 text-[18px] leading-none font-extrabold">{stat.value}</p>
-            <p className="mt-1 text-[10px] leading-tight text-ink-muted [overflow-wrap:anywhere]">{stat.label}</p>
-          </li>
-        ))}
-      </ul>
+      {/* Desktop: the route spine keeps the wide left column; stats and the
+          next action sit beside it, the action pinned while the route scrolls. */}
+      <div className="flex flex-1 flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_19rem] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-6">
+        <ul className="mt-3.5 grid grid-cols-4 gap-2 lg:col-start-2 lg:row-start-1 lg:mt-4 lg:grid-cols-2">
+          {[
+            { icon: "🏆", value: counts.verified, label: "Verified" },
+            { icon: "🧩", value: counts.challengesCompleted, label: "Completed" },
+            { icon: "🧭", value: gapsLeft, label: "Gaps left" },
+            { icon: "🔥", value: counts.activeDays, label: "Day streak" },
+          ].map((stat) => (
+            <li
+              key={stat.label}
+              className="rounded-[var(--radius-card)] border border-line bg-surface px-1 py-2.5 text-center"
+            >
+              <p className="text-[15px] leading-none" aria-hidden>
+                {stat.icon}
+              </p>
+              <p className="tnum mt-1 text-[18px] leading-none font-extrabold">{stat.value}</p>
+              <p className="mt-1 text-[10px] leading-tight text-ink-muted [overflow-wrap:anywhere]">{stat.label}</p>
+            </li>
+          ))}
+        </ul>
 
-      {/* The vertical route: one spine, one node per capability. It is the
-          shape of the product — a journey with stops — and it reads on a phone
-          in a way a horizontal timeline never does. */}
-      <ol className="mt-4 flex flex-1 flex-col">
-        {rows.map((row, index) => {
-          const capability = row.capability!;
-          const isNext = upNext?.capability?.id === capability.id;
-          const isLast = index === rows.length - 1;
+        {/* The vertical route: one spine, one node per capability. It is the
+            shape of the product — a journey with stops — and it reads on a phone
+            in a way a horizontal timeline never does. */}
+        <ol className="mt-4 flex flex-1 flex-col lg:col-start-1 lg:row-span-2 lg:row-start-1">
+          {rows.map((row, index) => {
+            const capability = row.capability!;
+            const isNext = upNext?.capability?.id === capability.id;
+            const isLast = index === rows.length - 1;
 
-          return (
-            <li key={capability.id} className="relative flex gap-3 pb-2">
-              <span className="flex w-5 shrink-0 flex-col items-center" aria-hidden>
-                <span className={cn("mt-4 size-3 shrink-0 rounded-full border-2", NODE[row.status])} />
-                {!isLast && <span className="w-0.5 flex-1 bg-line" />}
-              </span>
-
-              <Link
-                href={`/gap-map/${capability.id}`}
-                className={cn(
-                  "flex flex-1 items-center gap-3 rounded-[var(--radius-card)] border p-3.5 transition-colors",
-                  STYLE[row.status],
-                )}
-              >
-                <span className="min-w-0 flex-1">
-                  {isNext && (
-                    <span className="block text-[10px] font-bold tracking-[0.12em] text-primary-ink uppercase">
-                      Up next
-                    </span>
-                  )}
-                  <span className="mt-0.5 flex items-center gap-1.5 text-[15px] leading-snug font-bold">
-                    {row.status === "verified" && (
-                      <Check className="size-4 shrink-0 text-success" aria-hidden />
-                    )}
-                    {capability.name}
-                  </span>
-                  <span className="mt-0.5 block text-[12.5px] leading-snug text-ink-muted">
-                    {row.status === "verified"
-                      ? "You proved this in a challenge."
-                      : summaryFor(capability, row.classification)}
-                  </span>
+            return (
+              <li key={capability.id} className="relative flex gap-3 pb-2">
+                <span className="flex w-5 shrink-0 flex-col items-center" aria-hidden>
+                  <span className={cn("mt-4 size-3 shrink-0 rounded-full border-2", NODE[row.status])} />
+                  {!isLast && <span className="w-0.5 flex-1 bg-line" />}
                 </span>
 
-                <span
+                <Link
+                  href={`/gap-map/${capability.id}`}
                   className={cn(
-                    "shrink-0 text-[11px] font-bold tracking-[0.06em] uppercase",
-                    PILL[row.status],
+                    "flex flex-1 items-center gap-3 rounded-[var(--radius-card)] border p-3.5 transition-colors",
+                    STYLE[row.status],
                   )}
                 >
-                  {LABEL[row.status]}
-                  {row.status === "skip" && " ✓"}
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ol>
+                  <span className="min-w-0 flex-1">
+                    {isNext && (
+                      <span className="block text-[10px] font-bold tracking-[0.12em] text-primary-ink uppercase">
+                        Up next
+                      </span>
+                    )}
+                    <span className="mt-0.5 flex items-center gap-1.5 text-[15px] leading-snug font-bold">
+                      {row.status === "verified" && (
+                        <Check className="size-4 shrink-0 text-success" aria-hidden />
+                      )}
+                      {capability.name}
+                    </span>
+                    <span className="mt-0.5 block text-[12.5px] leading-snug text-ink-muted">
+                      {row.status === "verified"
+                        ? "You proved this in a challenge."
+                        : summaryFor(capability, row.classification)}
+                    </span>
+                  </span>
 
-      <div className="mt-4 flex flex-col gap-2.5">
-        <PandaAside
-          reaction="helpful"
-          message={
-            counts.verified > 0
-              ? "One gap closed. Your next challenge is ready. Let's go! 🧭"
-              : "Pick a gap and we'll turn it into your next challenge. 🎯"
-          }
-        />
+                  <span
+                    className={cn(
+                      "shrink-0 text-[11px] font-bold tracking-[0.06em] uppercase",
+                      PILL[row.status],
+                    )}
+                  >
+                    {LABEL[row.status]}
+                    {row.status === "skip" && " ✓"}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
 
-        {upNext?.capability && (
-          <Button
-            size="lg"
-            full
-            href={
-              nextChallenge
-                ? `/challenge/${nextChallenge.id}`
-                : `/gap-map/${upNext.capability.id}`
+        <div className="mt-4 flex flex-col gap-2.5 lg:sticky lg:top-10 lg:col-start-2 lg:row-start-2">
+          <PandaAside
+            reaction="helpful"
+            message={
+              counts.verified > 0
+                ? "One gap closed. Your next challenge is ready. Let's go! 🧭"
+                : "Pick a gap and we'll turn it into your next challenge. 🎯"
             }
-          >
-            Continue to {upNext.capability.name} →
-          </Button>
-        )}
+          />
 
-        {counts.verified > 0 && (
-          <Button size="md" full variant="outline" href="/challenges">
-            Choose a different challenge
-          </Button>
-        )}
+          {upNext?.capability && (
+            <Button
+              size="lg"
+              full
+              href={
+                nextChallenge
+                  ? `/challenge/${nextChallenge.id}`
+                  : `/gap-map/${upNext.capability.id}`
+              }
+            >
+              Continue to {upNext.capability.name} →
+            </Button>
+          )}
+
+          {counts.verified > 0 && (
+            <Button size="md" full variant="outline" href="/challenges">
+              Choose a different challenge
+            </Button>
+          )}
+        </div>
       </div>
 
       <BottomNav active="route" />

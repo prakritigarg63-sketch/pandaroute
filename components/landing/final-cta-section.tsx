@@ -7,8 +7,8 @@ import { revealOnce } from "@/lib/landing/motion";
 import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
 
 const CTA_LABEL: Record<HomeCtaPhase, string> = {
-  new: "Start the 10-minute diagnostic →",
-  resume: "Continue where you left off →",
+  new: "Start my diagnostic →",
+  resume: "Continue my journey →",
   return: "Continue my journey →",
 };
 

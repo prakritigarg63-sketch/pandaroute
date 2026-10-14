@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { DiagnosticRequired } from "@/components/diagnostic/diagnostic-required";
 import { CAPABILITY_BY_ID } from "@/lib/diagnostic/capabilities";
 import { classifyAnswers } from "@/lib/diagnostic/scoring";
 import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
@@ -75,6 +76,10 @@ export function CareerReadiness() {
   const diagnostic = useDiagnostic();
   const loop = useLoop();
   const counts = progression(loop);
+
+  if (diagnostic.completedAt === null) {
+    return <DiagnosticRequired title="Your PM Capability Profile" active="progress" />;
+  }
 
   const results = classifyAnswers(diagnostic.answers);
   const statusOf = (id: string): CapabilityStatus =>

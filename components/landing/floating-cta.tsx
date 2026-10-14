@@ -2,6 +2,7 @@
 
 import { useEffect, type RefObject } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
+import { cn } from "@/lib/cn";
 import { DiagnosticButtonContent } from "@/components/landing/shared";
 import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
 
@@ -13,18 +14,16 @@ import type { HomeCtaPhase } from "@/lib/landing/use-home-cta";
    view — the whole point is to stand in for a CTA that's currently off
    screen, not to duplicate one that's already visible.
 
-   Now that Home carries the app's bottom tab bar too, this sits just above
-   it (`BAR_OFFSET_PX`) rather than at the true viewport edge, so the two
-   never overlap.
+   When Home carries the app nav, this sits just above the mobile tab bar and
+   beside the desktop sidebar, so the two never overlap.
 --------------------------------------------------------------------------- */
 
 const CTA_LABEL: Record<HomeCtaPhase, string> = {
-  new: "Start diagnostic →",
-  resume: "Continue diagnostic →",
+  new: "Start my diagnostic →",
+  resume: "Continue my journey →",
   return: "Continue my journey →",
 };
 
-const BAR_OFFSET_PX = 64; // BottomNav's own height on this page
 const HIDDEN_PADDING_PX = 72;
 
 export function FloatingCta({
@@ -33,12 +32,14 @@ export function FloatingCta({
   onStart,
   starting,
   phase,
+  withAppNav,
 }: {
   heroRef: RefObject<HTMLElement | null>;
   finalCtaRef: RefObject<HTMLElement | null>;
   onStart: () => void;
   starting: boolean;
   phase: HomeCtaPhase;
+  withAppNav: boolean;
 }) {
   const heroInView = useInView(heroRef, { margin: "-10% 0px 0px 0px" });
   const finalInView = useInView(finalCtaRef, { margin: "0px 0px -10% 0px" });
@@ -59,8 +60,11 @@ export function FloatingCta({
     <AnimatePresence>
       {show && (
         <motion.div
-          className="fixed right-0 left-0 z-40 border-t border-line bg-canvas/95 px-4 pt-2.5 backdrop-blur-md"
-          style={{ bottom: BAR_OFFSET_PX }}
+          className={cn(
+            "fixed right-0 bottom-0 left-0 z-40 border-t border-line bg-canvas/95 px-4 pt-2.5 backdrop-blur-md",
+            // 4rem = the mobile tab bar's height; 14rem = the desktop sidebar.
+            withAppNav && "max-lg:bottom-16 lg:left-56",
+          )}
           initial={{ y: 64, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 64, opacity: 0 }}
@@ -72,7 +76,7 @@ export function FloatingCta({
               onClick={onStart}
               disabled={starting}
               aria-busy={starting}
-              className="quest-cta flex min-h-13 w-full items-center justify-center rounded-[var(--radius-pill)] bg-primary text-[15px] font-extrabold text-ink disabled:cursor-default"
+              className="quest-cta flex min-h-13 w-full items-center justify-center rounded-[var(--radius-pill)] bg-quest text-[15px] font-extrabold text-navy disabled:cursor-default"
             >
               <DiagnosticButtonContent starting={starting} idleLabel={CTA_LABEL[phase]} />
             </button>

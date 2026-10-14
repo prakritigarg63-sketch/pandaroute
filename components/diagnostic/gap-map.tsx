@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { StrongFoundation } from "@/components/diagnostic/strong-foundation";
+import { DiagnosticRequired } from "@/components/diagnostic/diagnostic-required";
 import {
   CAPABILITY_BY_ID,
   CLASSIFICATION_LABEL,
@@ -56,6 +57,8 @@ export function GapMap() {
   const results = classifyAnswers(state.answers);
   const totals = countBy(results);
   const [filter, setFilter] = useState<Classification | null>(null);
+
+  if (state.completedAt === null) return <DiagnosticRequired title="My Gap Map 🗺️" active="route" />;
 
   // The product rule this exists to serve: a learner who has demonstrated
   // every assessed capability doesn't get a gap invented to fill the list —
@@ -136,7 +139,7 @@ export function GapMap() {
         <StrongFoundation results={results} />
       ) : (
         <>
-          <ul className="mt-3 flex flex-1 flex-col gap-2">
+          <ul className="mt-3 flex flex-1 flex-col gap-2 lg:grid lg:grid-cols-2 lg:content-start lg:gap-3">
             {shown.map((result) => {
               const capability = CAPABILITY_BY_ID.get(result.capabilityId);
               if (!capability) return null;
@@ -146,7 +149,7 @@ export function GapMap() {
                   <Link
                     href={`/gap-map/${capability.id}`}
                     className={cn(
-                      "flex items-center gap-3 rounded-[var(--radius-card)] border p-3.5 transition-colors",
+                      "flex h-full items-center gap-3 rounded-[var(--radius-card)] border p-3.5 transition-colors",
                       ROW[result.classification],
                     )}
                   >
@@ -180,7 +183,7 @@ export function GapMap() {
               );
             })}
             {shown.length === 0 && (
-              <li className="rounded-[var(--radius-card)] border border-line bg-surface p-4 text-center text-[13.5px] text-ink-muted">
+              <li className="rounded-[var(--radius-card)] border border-line bg-surface p-4 text-center text-[13.5px] text-ink-muted lg:col-span-2">
                 Nothing in this category right now.
               </li>
             )}

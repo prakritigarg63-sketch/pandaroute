@@ -1,84 +1,28 @@
 import type { LucideIcon } from "lucide-react";
-import {
-  Award,
-  Briefcase,
-  Compass,
-  Map,
-  Rocket,
-  Shield,
-  Sparkles,
-  Target,
-  Trophy,
-  Users,
-  Wrench,
-} from "lucide-react";
+import { Briefcase, Shield, Target, Trophy } from "lucide-react";
 
 /* ---------------------------------------------------------------------------
    Landing page content.
 
-   Repeated cards render from these arrays rather than being hand-written five
-   times each — the route steps, the skill rows, the benefit cards. Copy is
-   reproduced verbatim from the brief; nothing here is placeholder text.
+   Repeated items render from these arrays rather than being hand-written —
+   the journey milestones, the benefit cards. Nothing here is placeholder
+   text, and nothing is an invented metric or testimonial.
 --------------------------------------------------------------------------- */
 
 export type Accent = "amber" | "coral" | "lavender" | "teal" | "sky";
 
-export interface JourneyCheckpoint {
+export interface JourneyMilestone {
   id: string;
   label: string;
   detail: string;
 }
 
-export const JOURNEY_CHECKPOINTS: JourneyCheckpoint[] = [
-  { id: "discover", label: "Discover", detail: "You are here" },
-  { id: "map", label: "Map", detail: "Your skills" },
-  { id: "learn", label: "Learn", detail: "Step by step" },
-  { id: "apply", label: "Apply", detail: "At work" },
-];
-
-export interface RouteStep {
-  id: number;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  accent: Accent;
-}
-
-export const ROUTE_STEPS: RouteStep[] = [
-  {
-    id: 1,
-    title: "Take the diagnostic",
-    description: "Answer 12 realistic workplace scenarios in 10–15 minutes.",
-    icon: Compass,
-    accent: "amber",
-  },
-  {
-    id: 2,
-    title: "Reveal your skill map",
-    description: "Get a personalized snapshot of your strengths and development areas.",
-    icon: Map,
-    accent: "lavender",
-  },
-  {
-    id: 3,
-    title: "Follow weekly quests",
-    description: "Build skills through practical challenges designed around your goals.",
-    icon: Rocket,
-    accent: "teal",
-  },
-];
-
-export interface Skill {
-  id: string;
-  name: string;
-  percent: number;
-  accent: Accent;
-}
-
-export const SKILLS: Skill[] = [
-  { id: "problem-solving", name: "Problem solving", percent: 82, accent: "lavender" },
-  { id: "collaboration", name: "Collaboration", percent: 74, accent: "teal" },
-  { id: "ai-mindset", name: "AI mindset", percent: 56, accent: "amber" },
+/** The four stops under the hero. The first is where every visitor stands. */
+export const JOURNEY_MILESTONES: JourneyMilestone[] = [
+  { id: "discover", label: "Discover", detail: "How you think" },
+  { id: "map", label: "Map", detail: "Your strengths & gaps" },
+  { id: "learn", label: "Learn", detail: "At your pace" },
+  { id: "apply", label: "Apply", detail: "In real life" },
 ];
 
 export interface Benefit {
@@ -120,32 +64,6 @@ export const BENEFITS: Benefit[] = [
   },
 ];
 
-export const SAMPLE_QUEST = {
-  eyebrow: "Coming soon",
-  title: "Analyze user feedback with AI",
-  description:
-    "Use AI to turn messy user feedback into clear themes, priorities, and actionable insights.",
-  minutes: 10,
-  xp: 150,
-  skills: ["AI Usage", "Data Interpretation", "Problem Solving"],
-  cta: "Quest coming soon",
-};
-
-export const TESTIMONIAL = {
-  quote:
-    "PandaRoute helped me see my blind spots and gave me practical steps I could use immediately.",
-  name: "Alex M.",
-  role: "Product Manager",
-  sampleLabel: "Sample",
-};
-
-export const NAV_LINKS = [
-  { id: "how-it-works", label: "How it works", href: "#how-it-works" },
-  { id: "skill-paths", label: "Skill paths", href: "#skill-map" },
-  { id: "sample-quest", label: "Sample quest", href: "#sample-quest" },
-  { id: "faq", label: "FAQ", href: "#faq" },
-];
-
 export const FOOTER_LINKS = [
   { id: "how-it-works", label: "How it works", href: "#how-it-works" },
   { id: "about", label: "About", href: "#" },
@@ -161,21 +79,3 @@ export const ACCENT_TILE: Record<Accent, string> = {
   teal: "bg-teal-soft text-teal",
   sky: "bg-sky-soft text-sky",
 };
-
-export const ACCENT_BORDER: Record<Accent, string> = {
-  amber: "border-primary-strong/35",
-  coral: "border-coral/30",
-  lavender: "border-lavender/30",
-  teal: "border-teal/30",
-  sky: "border-sky/30",
-};
-
-export const ACCENT_LINE: Record<Accent, string> = {
-  amber: "bg-primary",
-  coral: "bg-coral",
-  lavender: "bg-lavender",
-  teal: "bg-teal",
-  sky: "bg-sky",
-};
-
-export { Award, Sparkles, Users, Wrench };

@@ -10,7 +10,10 @@ import { Progress } from "@/components/ui/Progress";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { PandaMascot } from "@/components/panda/panda-mascot";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { DiagnosticRequired } from "@/components/diagnostic/diagnostic-required";
 import { useCapstone } from "@/lib/capstone/use-capstone";
+import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
+import { progression, useLoop } from "@/lib/challenge/use-challenge";
 import {
   CAPABILITY_CHIPS,
   CASE_SUMMARY,
@@ -80,6 +83,13 @@ function EditableField({
 }
 
 export function CareerHub() {
+  const diagnostic = useDiagnostic();
+  // Everything here packages the capstone, so "you've built the skills" is
+  // only true once there is one.
+  const hasCapstone = progression(useLoop()).capstones > 0;
+
+  if (diagnostic.completedAt === null) return <DiagnosticRequired title="Career" active="progress" />;
+
   const cards = [
     {
       id: "portfolio",
@@ -110,11 +120,17 @@ export function CareerHub() {
   return (
     <div className="screen screen-flush">
       <h1 className="text-[25px] leading-tight font-extrabold text-balance">
-        You&apos;ve built the skills. Now use them. 🚀
+        {hasCapstone ? "You've built the skills. Now use them. 🚀" : "Turn your work into career proof 🚀"}
       </h1>
       <p className="mt-1.5 text-[14px] leading-snug text-ink-muted">
-        Your capability profile shows what you can do. Now let&apos;s turn that evidence
-        into something you can use in your PM transition.
+        {hasCapstone ? (
+          <>
+            Your capability profile shows what you can do. Now let&apos;s turn that evidence
+            into something you can use in your PM transition.
+          </>
+        ) : (
+          "Once your capstone is done, this is where it becomes a portfolio case and an interview story."
+        )}
       </p>
 
       <ul className="mt-4 flex flex-col gap-2.5">
@@ -150,7 +166,13 @@ export function CareerHub() {
       </ul>
 
       <div className="mt-auto flex flex-col gap-2.5 pt-5">
-        <PandaAside message="You've built the evidence. Now we need to make it easy for someone else to see it." />
+        <PandaAside
+          message={
+            hasCapstone
+              ? "You've built the evidence. Now we need to make it easy for someone else to see it."
+              : "Your capstone is the evidence. Everything here is built from it."
+          }
+        />
       </div>
 
       <BottomNav active="progress" />

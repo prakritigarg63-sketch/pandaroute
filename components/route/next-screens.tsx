@@ -10,7 +10,9 @@ import { Progress } from "@/components/ui/Progress";
 import { PandaAside } from "@/components/panda/panda-aside";
 import { PandaMascot } from "@/components/panda/panda-mascot";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { DiagnosticRequired } from "@/components/diagnostic/diagnostic-required";
 import { CAPABILITY_BY_ID } from "@/lib/diagnostic/capabilities";
+import { useDiagnostic } from "@/lib/diagnostic/use-diagnostic";
 import { CAPSTONE_REQUIREMENT, CORE_CAPABILITIES } from "@/lib/challenge/challenges";
 import { progression, seedDemoProgress, useLoop } from "@/lib/challenge/use-challenge";
 
@@ -50,6 +52,7 @@ export function DemoJump({ label, target }: { label: string; target: number }) {
 // this file should carry alongside the milestone and capstone screens below.
 
 export function CareerMilestone() {
+  const diagnostic = useDiagnostic();
   const loop = useLoop();
   const counts = progression(loop);
   const unlocked = counts.coreVerified >= CAPSTONE_REQUIREMENT;
@@ -58,107 +61,120 @@ export function CareerMilestone() {
   // Where the learner sits between the two roles, as a share of the core set.
   const share = Math.round((counts.coreVerified / CAPSTONE_REQUIREMENT) * 100);
 
+  if (diagnostic.completedAt === null) return <DiagnosticRequired title="Your Progress" active="progress" />;
+
   return (
     <div className="screen screen-flush">
       <h1 className="text-[25px] leading-tight font-extrabold text-balance">
-        Look how far you&apos;ve come! 🎉
+        {/* Celebrating four zeros reads as hollow — the cheer waits for a
+            first verified capability. */}
+        {counts.verified > 0 ? <>Look how far you&apos;ve come! 🎉</> : "Your Progress"}
       </h1>
 
-      <ul className="mt-4 grid grid-cols-4 gap-2">
-        {[
-          { icon: "🏆", value: counts.verified, label: "Verified" },
-          { icon: "🧩", value: counts.challengesCompleted, label: "Completed" },
-          { icon: "↑", value: counts.gapsClosed, label: "Gaps closed" },
-          { icon: "🔥", value: counts.activeDays, label: "Day streak" },
-        ].map((stat) => (
-          <li
-            key={stat.label}
-            className="rounded-[var(--radius-card)] border border-line bg-surface px-1 py-2.5 text-center"
+      {/* Desktop: progress on the left, the capstone and Panda beside it. */}
+      <div className="flex flex-1 flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-x-6">
+        <div>
+          <ul className="mt-4 grid grid-cols-4 gap-2">
+            {[
+              { icon: "🏆", value: counts.verified, label: "Verified" },
+              { icon: "🧩", value: counts.challengesCompleted, label: "Completed" },
+              { icon: "↑", value: counts.gapsClosed, label: "Gaps closed" },
+              { icon: "🔥", value: counts.activeDays, label: "Day streak" },
+            ].map((stat) => (
+              <li
+                key={stat.label}
+                className="rounded-[var(--radius-card)] border border-line bg-surface px-1 py-2.5 text-center"
+              >
+                <p className="text-[14px] leading-none" aria-hidden>
+                  {stat.icon}
+                </p>
+                <p className="tnum mt-1 text-[18px] leading-none font-extrabold">{stat.value}</p>
+                <p className="mt-1 text-[10px] leading-tight text-ink-muted [overflow-wrap:anywhere]">{stat.label}</p>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-5 text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
+            Your transition
+          </p>
+
+          <div className="mt-2 rounded-[var(--radius-card)] border border-line bg-surface p-3.5">
+            <div className="flex items-center justify-between text-[12px] font-semibold">
+              <span className="text-ink-muted">QA / Test Analyst</span>
+              <span className="text-primary-ink">Product Manager</span>
+            </div>
+
+            <div className="relative mt-2.5 h-1.5 rounded-full bg-line">
+              <div
+                className="h-full rounded-full bg-primary transition-[width] duration-500"
+                style={{ width: `${share}%` }}
+              />
+              <span
+                className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-primary bg-canvas"
+                style={{ left: `${share}%` }}
+                aria-hidden
+              />
+            </div>
+          </div>
+
+          <p className="mt-5 text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
+            Core capability progress
+          </p>
+          <p className="mt-1.5 text-[15px] font-bold">
+            {counts.coreVerified} of {CORE_CAPABILITIES.length} core capabilities demonstrated
+          </p>
+          <Progress
+            value={counts.coreVerified}
+            max={CORE_CAPABILITIES.length}
+            label={`${counts.coreVerified} of ${CORE_CAPABILITIES.length} core capabilities demonstrated`}
+            className="mt-2"
+          />
+        </div>
+
+        <div className="flex flex-1 flex-col lg:sticky lg:top-10">
+          <Card
+            className={cn(
+              "mt-5 lg:mt-4",
+              unlocked ? "border-success/40 bg-skip-soft" : "border-line bg-surface",
+            )}
           >
-            <p className="text-[14px] leading-none" aria-hidden>
-              {stat.icon}
-            </p>
-            <p className="tnum mt-1 text-[18px] leading-none font-extrabold">{stat.value}</p>
-            <p className="mt-1 text-[10px] leading-tight text-ink-muted [overflow-wrap:anywhere]">{stat.label}</p>
-          </li>
-        ))}
-      </ul>
+            <div className="flex items-start gap-3">
+              <span className="text-[22px] leading-none" aria-hidden>
+                {unlocked ? "🔓" : "🔒"}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[15px] leading-snug font-bold">Capstone Challenge</p>
+                <p className="mt-0.5 text-[13px] leading-snug text-ink-muted">
+                  {unlocked
+                    ? "Everything you've proved, in one realistic product problem."
+                    : `Verify ${remaining} more core ${remaining === 1 ? "capability" : "capabilities"} to unlock.`}
+                </p>
+              </div>
+            </div>
 
-      <p className="mt-5 text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
-        Your transition
-      </p>
+            {unlocked && (
+              <Button size="lg" full className="mt-3" href="/capstone">
+                Open my capstone →
+              </Button>
+            )}
+          </Card>
 
-      <div className="mt-2 rounded-[var(--radius-card)] border border-line bg-surface p-3.5">
-        <div className="flex items-center justify-between text-[12px] font-semibold">
-          <span className="text-ink-muted">QA / Test Analyst</span>
-          <span className="text-primary-ink">Product Manager</span>
-        </div>
-
-        <div className="relative mt-2.5 h-1.5 rounded-full bg-line">
-          <div
-            className="h-full rounded-full bg-primary transition-[width] duration-500"
-            style={{ width: `${share}%` }}
-          />
-          <span
-            className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-primary bg-canvas"
-            style={{ left: `${share}%` }}
-            aria-hidden
-          />
-        </div>
-      </div>
-
-      <p className="mt-5 text-[11px] font-semibold tracking-[0.12em] text-ink-faint uppercase">
-        Core capability progress
-      </p>
-      <p className="mt-1.5 text-[15px] font-bold">
-        {counts.coreVerified} of {CORE_CAPABILITIES.length} core capabilities demonstrated
-      </p>
-      <Progress
-        value={counts.coreVerified}
-        max={CORE_CAPABILITIES.length}
-        label={`${counts.coreVerified} of ${CORE_CAPABILITIES.length} core capabilities demonstrated`}
-        className="mt-2"
-      />
-
-      <Card
-        className={cn(
-          "mt-5",
-          unlocked ? "border-success/40 bg-skip-soft" : "border-line bg-surface",
-        )}
-      >
-        <div className="flex items-start gap-3">
-          <span className="text-[22px] leading-none" aria-hidden>
-            {unlocked ? "🔓" : "🔒"}
-          </span>
-          <div className="min-w-0">
-            <p className="text-[15px] leading-snug font-bold">Capstone Challenge</p>
-            <p className="mt-0.5 text-[13px] leading-snug text-ink-muted">
-              {unlocked
-                ? "Everything you've proved, in one realistic product problem."
-                : `Verify ${remaining} more core ${remaining === 1 ? "capability" : "capabilities"} to unlock.`}
-            </p>
+          <div className="mt-auto flex flex-col gap-2.5 pt-5">
+            <PandaAside
+              reaction={unlocked ? "celebrate" : "helpful"}
+              message={
+                unlocked
+                  ? "You've practised the skills individually. Now let's see how you use them together."
+                  : counts.verified > 0
+                    ? "You've practised the skills individually. Soon, we'll see how you use them together."
+                    : "This fills in as you work through challenges. Your first one is on your route."
+              }
+            />
+            {!unlocked && (
+              <DemoJump label="Simulate the remaining challenges" target={CAPSTONE_REQUIREMENT} />
+            )}
           </div>
         </div>
-
-        {unlocked && (
-          <Button size="lg" full className="mt-3" href="/capstone">
-            Open my capstone →
-          </Button>
-        )}
-      </Card>
-
-      <div className="mt-auto flex flex-col gap-2.5 pt-5">
-        <PandaAside
-          reaction={unlocked ? "celebrate" : "helpful"}
-          message={
-            unlocked
-              ? "You've practised the skills individually. Now let's see how you use them together."
-              : "You've practised the skills individually. Soon, we'll see how you use them together."
-          }
-        />
-        {!unlocked && (
-          <DemoJump label="Simulate the remaining challenges" target={CAPSTONE_REQUIREMENT} />
-        )}
       </div>
 
       <BottomNav active="progress" />

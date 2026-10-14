@@ -447,6 +447,32 @@
     padding-top: 0.5rem;
     padding-bottom: max(env(safe-area-inset-bottom), 0.25rem);
   }
+
+  /* The desktop shell (lg and up). Focused flows — the diagnostic, a
+     challenge — get a little more room but stay a single reading column.
+     Screens that carry the main nav get a wider column, offset past the nav,
+     which bottom-nav.tsx turns into a fixed sidebar at this width. Keyed off
+     the nav's presence rather than a list of routes, so a new screen with the
+     nav picks this up on its own. */
+  @media (min-width: 64rem) {
+    .screen {
+      max-width: 34rem;
+      padding-top: 2.5rem;
+    }
+
+    body:has([data-app-nav]) {
+      padding-left: 14rem;
+    }
+
+    body:has([data-app-nav]) .screen {
+      max-width: 52rem;
+      padding-inline: 2rem;
+    }
+
+    body:has([data-app-nav]) .screen-flush {
+      padding-bottom: 2.5rem;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -473,6 +499,12 @@
   /* Landing page only: the fourth accent, used once for technical proof. */
   --color-teal: #48aaa6;
   --color-teal-soft: #e7f4f3;
+
+  /* Landing hero. Cream is the panda artwork's own flat background, sampled
+     from the file, so the illustration and its video sit on the page with no
+     visible edge. Navy is the hero headline (18.6:1 on cream). */
+  --color-cream: #fff9ed;
+  --color-navy: #101827;
 }
 
 /* Entrance: one gentle sequence, finished inside 1.2s. Each element carries a
